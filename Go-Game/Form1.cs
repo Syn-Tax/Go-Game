@@ -24,5 +24,14 @@ namespace Go_Game
             result = MessageBox.Show("Go. Alexander Glen, Lewis Simmonds, Oscar Morris. (c) 2023", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
+
+        public PictureBox renderImage(string path, int x, int y, int w, int h)
+        {
+            PictureBox pb = new PictureBox();
+            pb.ImageLocation = path;
+            pb.Location = new Point(x, y);
+            pb.Size = new Size(w, h);
+            return pb;
+        }
     }
 }
