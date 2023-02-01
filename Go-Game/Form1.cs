@@ -30,35 +30,32 @@ namespace Go_Game
         public void createGrid() // The create grid function is responsible for building the board.
         {
             int boardSize = 9; // For now, this is 9, eventually we can give the user options to pick 9x9, 13x13, 19x19
-            Button[,] boardBtns = new Button[boardSize, boardSize]; // Creating the 2D Array
+            Button[,] boardBtns = new Button[boardSize, boardSize]; // Creating the 2D Array of Buttons
             renderGrid(); // Drawing the Go board image to the form.
-            // Now we need to link the 2D array to the image
-            // Creating buttons
-            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             for (int x=0; x < boardSize; x++)
             {
                 for (int y = 0; y < boardSize; y++)
                 {
+                    // Creating the buttons
                     boardBtns[x, y] = new Button();
-                    boardBtns[x, y].SetBounds((55*y), (55*x), 30, 30);
-                    boardBtns[x, y].Text = "x,y";
+                    // Buttons need to be aligned with the form, so that they are aligned with the board correctly.
+                    boardBtns[x, y].SetBounds(250+(37*x), 70+(38*y), 25, 25);
+                    boardBtns[x, y].Text = "b";
                     makeTransparentBtn(boardBtns[x, y]); // note we cannot use Color.Transparent because we are using picturebox
                     boardBtns[x, y].Click += new EventHandler(this.btnEvent_Click);
                     Controls.Add(boardBtns[x, y]);
                 }
             }
+            // Rendering the grid again, so that buttons are place on top.
+            renderGrid();
         }
 
         public Button makeTransparentBtn(Button btn) // This function is used to make buttons transparent.
         {
-            // From: https://stackoverflow.com/questions/40451277/transparent-button-on-picture-box-in-c-sharp
             btn.TabStop = false;
-            // btn.FlatStyle = FlatStyle.Flat;
-            // btn.FlatAppearance.BorderSize = 0; // removing border
-            btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 255, 255, 255); // Setting the colour to transparent (alpha 0), when clicking the button
-            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 255, 255, 255);
-            btn.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255);
-            btn.BackColor = Color.FromArgb(0, 255, 255, 255);
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0; // removing border
+            btn.BackColor = Color.Transparent;
             return btn;
         }
 
@@ -98,6 +95,7 @@ namespace Go_Game
 
         void btnEvent_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("Button has been clicked");
 
 
         }
