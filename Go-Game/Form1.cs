@@ -40,22 +40,21 @@ namespace Go_Game
                     boardBtns[x, y] = new Button();
                     // Buttons need to be aligned with the form, so that they are aligned with the board correctly.
                     boardBtns[x, y].SetBounds(250+(37*x), 70+(38*y), 25, 25);
-                    boardBtns[x, y].Text = "b";
-                    makeTransparentBtn(boardBtns[x, y]); // note we cannot use Color.Transparent because we are using picturebox
-                    boardBtns[x, y].Click += new EventHandler(this.btnEvent_Click);
-                    Controls.Add(boardBtns[x, y]);
+                    makeTransparentBtn(boardBtns[x, y]);
+                    boardBtns[x, y].Click += new EventHandler(this.btnEvent_Click); // Adding the click handler to the button
+                    Controls.Add(boardBtns[x, y]); // Adding the button the form
                 }
             }
             // Rendering the grid again, so that buttons are place on top.
             renderGrid();
         }
 
-        public Button makeTransparentBtn(Button btn) // This function is used to make buttons transparent.
+        public Button makeTransparentBtn(Button btn)
         {
-            btn.TabStop = false;
-            btn.FlatStyle = FlatStyle.Flat;
+            btn.TabStop = false; // This means that the user can't select buttons by pressing tab
+            btn.FlatStyle = FlatStyle.Flat; // removing 3D effects from the button with flat styling
             btn.FlatAppearance.BorderSize = 0; // removing border
-            btn.BackColor = Color.Transparent;
+            btn.BackColor = Color.Transparent; // Making the button transparent with the form.
             return btn;
         }
 
