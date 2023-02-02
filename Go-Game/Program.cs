@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Go_Game
+namespace GoGame
 {
     internal static class Program
     {
@@ -16,7 +16,7 @@ namespace Go_Game
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new goGame());
+            Application.Run(new GoGame());
         }
     }
 }
