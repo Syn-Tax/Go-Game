@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Go_Game
+namespace GoGame
 {
-    public partial class goGame : Form
+    public partial class GoGame : Form
     {
-        public goGame()
+        public GoGame()
         {
             InitializeComponent();
             createGrid();

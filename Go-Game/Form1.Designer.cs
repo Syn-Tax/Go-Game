@@ -1,6 +1,6 @@
-﻿namespace Go_Game
+﻿namespace GoGame
 {
-    partial class goGame
+    partial class GoGame
     {
         /// <summary>
         /// Required designer variable.
