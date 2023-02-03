@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace GoGame
 {
-    public partial class GoGame : Form
+    public partial class GameBoard : Form
     {
-        public GoGame()
+        public GameBoard()
         {
             InitializeComponent();
             createGrid();
