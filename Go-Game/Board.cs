@@ -15,9 +15,13 @@ namespace GoGame
         // 2d integer array to store board position - 0 is empty, 1 is black, 2 is white
         private int[,] board;
         private int player;
+        private int numMoves;
 
         // list of grouped stones (required for capture and scoring logic)
         private List<Group> groups;
+
+        // list of previous board positions (required for ko rule logic)
+        private LinkedList<int[,]> prevBoards;
 
         public Board(int size) 
         {
@@ -25,29 +29,33 @@ namespace GoGame
             this.size = size;
 
             // initialise board
-            board = new int[this.size,this.size];
+            this.board = new int[this.size,this.size];
             for (int i=0; i<this.size; i++)
             {
                 for (int j=0; j<this.size; j++)
                 {
-                    board[i,j] = 0;
+                    this.board[i,j] = 0;
                 }
             }
 
+            // initialise prevBoards variable
+           this. prevBoards = new LinkedList<int[,]>();
+
             // initialise first player (to black)
             this.player = 1;
+            this.numMoves = 0;
         }
 
         // returns current board position
         public int[,] getBoard()
         {
-            return board;
+            return this.board;
         }
 
         // returns true if current player is white, false if current player is black
         public int getPlayer()
         {
-            return player;
+            return this.player;
         }
 
         // returns true if move was legally made, false if move was illegal and could not be played
@@ -69,11 +77,19 @@ namespace GoGame
 
             if (!validCapture) { this.board[row, col] = 0; return false; }
 
+            // save board
+            this.prevBoards.AddFirst((int[,])this.board.Clone());
+            if (this.numMoves > 2)
+            {
+                this.prevBoards.RemoveLast();
+            }
+
             // switch player
             if (switchPlayer)
             {
                 this.player = (this.player % 2) + 1;
             }
+            this.numMoves++;
             // return success
             return true;
         }
@@ -192,6 +208,7 @@ namespace GoGame
         // returns true if capture is valid, false otherwise
         private bool calcCaptures()
         {
+            int[,] tempBoard = (int[,])this.board.Clone();
             bool enemyCapture = false;
             for (int i=0; i<this.groups.Count; i++)
             {
@@ -201,7 +218,7 @@ namespace GoGame
                     // remove all stones in the group
                     foreach (Vector p in this.groups[i].getStones())
                     {
-                        board[(int)p.X, (int)p.Y] = 0;
+                        tempBoard[(int)p.X, (int)p.Y] = 0;
                     }
                     groups.RemoveAt(i);
                 } 
@@ -216,6 +233,41 @@ namespace GoGame
                 }
 
             }
+            if (listInList(tempBoard, this.prevBoards.ToList()))
+            {
+                // Ko rule activated!
+                return false;
+            }
+
+            this.board = tempBoard;
+            return true;
+        }
+
+        // for some unknown reason, .Contains didn't work so had to implement it myself :(
+        private bool listInList(int[,] board, List<int[,]> list)
+        {
+            for (int i=0; i<list.Count; i++)
+            {
+                if (listEqual(list[i], board))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool listEqual(int[,] board1, int[,] board2)
+        {
+            for (int row=0; row<this.size; row++)
+            {
+                for (int col=0; col<this.size; col++)
+                {
+                    if (board1[row,col] != board2[row,col])
+                    {
+                        return false;
+                    }
+                }
+            }
             return true;
         }
 
@@ -227,6 +279,16 @@ namespace GoGame
                 {
                     Console.Write(this.board[row, col].ToString() + " ");
                 }
+
+                for (LinkedListNode<int[,]> node = this.prevBoards.First; node != null; node = node.Next)
+                {
+                    Console.Write("\t");
+                    for (int col=0; col<this.size; col++)
+                    {
+                        Console.Write(node.Value[row,col].ToString() + " ");
+                    }
+                }
+
                 Console.Write("\n");
             }
 
