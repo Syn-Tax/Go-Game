@@ -16,6 +16,15 @@ namespace GoGame
         {
             InitializeComponent();
             createGrid();
+            Board b = new Board(9);
+            b.move(1, 1, false);
+            b.move(1, 2, false);
+            b.move(2, 2, true);
+
+            b.move(5, 1, false);
+            b.move(5, 2, false);
+            b.move(6, 2, true);
+            b.printBoard();
         }
 
         protected override void OnResize(EventArgs e)
