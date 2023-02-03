@@ -62,16 +62,18 @@ namespace GoGame
             // make move
             this.board[row,col] = this.player;
 
+
+            // update groups & calculate captures
+            updateGroups();
+            bool validCapture = calcCaptures();
+
+            if (!validCapture) { this.board[row, col] = 0; return false; }
+
             // switch player
             if (switchPlayer)
             {
                 this.player = (this.player % 2) + 1;
             }
-
-            // update groups & calculate captures
-            updateGroups();
-            calcCaptures();
-
             // return success
             return true;
         }
@@ -147,36 +149,28 @@ namespace GoGame
                 if (validCoord(x,y-1) && !liberties.Contains(new Vector(x,y-1)) && board[x,y-1] == 0) { liberties.Add(new Vector(x, y - 1)); }
 
                 // check north
-                if (validCoord(x+1, y)
-                    && visited[x+1, y] != 1
-                    && this.board[x +1, y] == group.getPlayer())
+                if (validCoord(x+1, y) && visited[x+1, y] != 1 && this.board[x +1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x + 1, y));
                     visited[x + 1, y] = 1; 
                 }
 
                 // check south
-                if (validCoord(x-1, y)
-                    && visited[x-1, y] != 1
-                    && this.board[x-1, y] == group.getPlayer())
+                if (validCoord(x-1, y) && visited[x-1, y] != 1 && this.board[x-1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x - 1, y));
                     visited[x - 1, y] = 1; 
                 }
 
                 // check east
-                if (validCoord(x, y+1)
-                    && visited[x, y+1] != 1
-                    && this.board[x, y+1] == group.getPlayer())
+                if (validCoord(x, y+1) && visited[x, y+1] != 1 && this.board[x, y+1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y + 1));
                     visited[x, y + 1] = 1; 
                 }
 
                 // check west
-                if (validCoord(x, y-1)
-                    && visited[x, y-1] != 1
-                    && this.board[x, y-1] == group.getPlayer())
+                if (validCoord(x, y-1) && visited[x, y-1] != 1 && this.board[x, y-1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y - 1));
                     visited[x, y - 1] = 1; 
@@ -195,19 +189,34 @@ namespace GoGame
             return true;
         }
 
-        private void calcCaptures()
+        // returns true if capture is valid, false otherwise
+        private bool calcCaptures()
         {
+            bool enemyCapture = false;
             for (int i=0; i<this.groups.Count; i++)
             {
-                if (this.groups[i].getLiberties() == 0)
+                if (this.groups[i].getLiberties() == 0 && this.groups[i].getPlayer() != this.player)
                 {
+                    enemyCapture = true;
+                    // remove all stones in the group
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         board[(int)p.X, (int)p.Y] = 0;
                     }
                     groups.RemoveAt(i);
-                }
+                } 
             }
+
+            foreach(Group g in this.groups)
+            {
+                if (g.getPlayer() == this.player && !enemyCapture && g.getLiberties() == 0)
+                {
+                    // self capture, without capturing an enemy group
+                    return false;
+                }
+
+            }
+            return true;
         }
 
         public void printBoard()
