@@ -18,12 +18,16 @@ namespace GoGame
             createGrid();
             Board b = new Board(9);
             b.move(1, 1, false);
-            b.move(1, 2, false);
-            b.move(2, 2, true);
+            b.move(1, 2, true);
 
-            b.move(5, 1, false);
-            b.move(5, 2, false);
-            b.move(6, 2, true);
+            b.move(1, 0, false);
+            b.move(0, 1, false);
+            b.move(0, 2, false);
+            b.move(1, 3, false);
+            b.move(2, 2, false);
+            b.printBoard();
+
+            b.move(2, 1, true);
             b.printBoard();
         }
 

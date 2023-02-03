@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -69,7 +70,7 @@ namespace GoGame
 
             // update groups & calculate captures
             updateGroups();
-            calcCaptures(row, col);
+            calcCaptures();
 
             // return success
             return true;
@@ -97,7 +98,6 @@ namespace GoGame
                     {
                         if (group.inGroup(row, col))
                         {
-                            Console.WriteLine("already in group");
                             inGroup = true;
                             break;
                         }
@@ -126,6 +126,7 @@ namespace GoGame
             int[,] visited = new int[this.size, this.size];
 
             List<Vector> queue = new List<Vector>();
+            List<Vector> liberties = new List<Vector>();
 
             queue.Add(new Vector(row, col));
             visited[row, col] = 1;
@@ -133,46 +134,56 @@ namespace GoGame
             while (queue.Count > 0)
             {
                 Vector p = queue[0];
+                int x = (int)p.X;
+                int y = (int)p.Y;
                 queue.RemoveAt(0);
 
                 group.addStone((int)p.X, (int)p.Y);
 
+                // find liberties
+                if (validCoord(x+1,y) && !liberties.Contains(new Vector(x+1,y)) && board[x+1,y] == 0) { liberties.Add(new Vector(x + 1, y)); }
+                if (validCoord(x-1,y) && !liberties.Contains(new Vector(x-1,y)) && board[x-1,y] == 0) { liberties.Add(new Vector(x - 1, y)); }
+                if (validCoord(x,y+1) && !liberties.Contains(new Vector(x,y+1)) && board[x,y+1] == 0) { liberties.Add(new Vector(x, y + 1)); }
+                if (validCoord(x,y-1) && !liberties.Contains(new Vector(x,y-1)) && board[x,y-1] == 0) { liberties.Add(new Vector(x, y - 1)); }
+
                 // check north
-                if (validCoord((int)p.X+1, (int)p.Y)
-                    && visited[(int)p.X+1, (int)p.Y] != 1
-                    && this.board[(int)p.X+1, (int)p.Y] == group.getPlayer())
+                if (validCoord(x+1, y)
+                    && visited[x+1, y] != 1
+                    && this.board[x +1, y] == group.getPlayer())
                 {
-                    queue.Add(new Vector(p.X + 1, p.Y));
-                    visited[(int)p.X + 1, (int)p.Y] = 1; 
+                    queue.Add(new Vector(x + 1, y));
+                    visited[x + 1, y] = 1; 
                 }
 
                 // check south
-                if (validCoord((int)p.X-1, (int)p.Y)
-                    && visited[(int)p.X-1, (int)p.Y] != 1
-                    && this.board[(int)p.X-1, (int)p.Y] == group.getPlayer())
+                if (validCoord(x-1, y)
+                    && visited[x-1, y] != 1
+                    && this.board[x-1, y] == group.getPlayer())
                 {
-                    queue.Add(new Vector(p.X - 1, p.Y));
-                    visited[(int)p.X - 1, (int)p.Y] = 1; 
+                    queue.Add(new Vector(x - 1, y));
+                    visited[x - 1, y] = 1; 
                 }
 
                 // check east
-                if (validCoord((int)p.X, (int)p.Y+1)
-                    && visited[(int)p.X, (int)p.Y+1] != 1
-                    && this.board[(int)p.X, (int)p.Y+1] == group.getPlayer())
+                if (validCoord(x, y+1)
+                    && visited[x, y+1] != 1
+                    && this.board[x, y+1] == group.getPlayer())
                 {
-                    queue.Add(new Vector(p.X, p.Y + 1));
-                    visited[(int)p.X, (int)p.Y + 1] = 1; 
+                    queue.Add(new Vector(x, y + 1));
+                    visited[x, y + 1] = 1; 
                 }
 
                 // check west
-                if (validCoord((int)p.X, (int)p.Y-1)
-                    && visited[(int)p.X, (int)p.Y-1] != 1
-                    && this.board[(int)p.X, (int)p.Y-1] == group.getPlayer())
+                if (validCoord(x, y-1)
+                    && visited[x, y-1] != 1
+                    && this.board[x, y-1] == group.getPlayer())
                 {
-                    queue.Add(new Vector(p.X, p.Y - 1));
-                    visited[(int)p.X, (int)p.Y - 1] = 1; 
+                    queue.Add(new Vector(x, y - 1));
+                    visited[x, y - 1] = 1; 
                 }
             }
+
+            group.setLiberties(liberties.Count);
 
             return group;
         }
@@ -184,9 +195,19 @@ namespace GoGame
             return true;
         }
 
-        private void calcCaptures(int row, int col)
+        private void calcCaptures()
         {
-            
+            for (int i=0; i<this.groups.Count; i++)
+            {
+                if (this.groups[i].getLiberties() == 0)
+                {
+                    foreach (Vector p in this.groups[i].getStones())
+                    {
+                        board[(int)p.X, (int)p.Y] = 0;
+                    }
+                    groups.RemoveAt(i);
+                }
+            }
         }
 
         public void printBoard()
@@ -205,48 +226,6 @@ namespace GoGame
             {
                 group.printGroup();
             }
-        }
-    }
-
-    internal class Group
-    {
-        private int player;
-        private List<Vector> stones;
-
-        public Group(int player) 
-        { 
-            stones = new List<Vector>();
-            this.player = player;
-        }
-
-        public void addStone(int row, int col)
-        {
-            stones.Add(new Vector(row,col));
-        }
-
-        public List<Vector> getStones()
-        {
-            return stones;
-        }
-
-        public bool inGroup(int row, int col) 
-        { 
-            return stones.Contains(new Vector(row, col)); 
-        }
-
-        public int getPlayer()
-        {
-            return this.player;
-        }
-
-        public void printGroup()
-        {
-            Console.WriteLine(stones.Count().ToString() + " " + this.player.ToString());
-            foreach (Vector stone in this.stones)
-            {
-                Console.Write(stone.ToString() + " ");
-            }
-            Console.Write("\n\n");
         }
     }
 }
