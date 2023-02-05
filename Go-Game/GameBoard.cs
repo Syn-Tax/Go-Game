@@ -1,31 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GoGame
 {
     public partial class GameBoard : Form
     {
+        private PictureBox gridPictureBox;
+
         public GameBoard()
         {
             InitializeComponent();
+            mainMenuPanel.Visible = true;
+            optionMenuPanel.Visible = false;
+            gameBoardPanel.Visible = false;
             createGrid();
         }
 
-        protected override void OnResize(EventArgs e)
+        private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked
+        {
+            // bring the gameBoardPanel to the front and make it visible
+            gameBoardPanel.BringToFront();
+            gameBoardPanel.Visible = true;
+        }
+
+        private void optionsButton_Click(object sender, EventArgs e) // handler for when the optionsButton is clicked
+        {
+            // bring the optionMenuPanel to the front and make it visible
+            optionMenuPanel.BringToFront();
+            optionMenuPanel.Visible = true;
+        }
+
+        private void quitButton_Click(object sender, EventArgs e) // handler for when the quitButton is clicked
+        {
+            // close the application
+            this.Close();
+        }
+
+        private void gameBoardBackButton_Click(object sender, EventArgs e) // handler for when the backButton on the gameBoard is clicked
+        {
+            // bring the mainMenuPanel to the front and make the gameBoardPanel invisible
+            mainMenuPanel.BringToFront();
+            gameBoardPanel.Visible = false;
+        }
+        private void optionsBackButton_Click(object sender, EventArgs e) // handler for when the backButton on the optionMenuPanel is clicked
+        {
+            // bring the mainMenuPanel to the front and make the optionMenuPanel invisible
+            mainMenuPanel.BringToFront();
+            optionMenuPanel.Visible = false;
+        }
+
+        protected override void OnResize(EventArgs e) // event handler for whenever the form is resized
         {
             base.OnResize(e);
             renderGrid();
-            //Console.WriteLine(this.Height);
-            //MessageBox.Show("you resized the window!!!");
+            adjustButtons();
         }
-
 
         public void createGrid() // The create grid function is responsible for building the board.
         {
@@ -39,18 +69,56 @@ namespace GoGame
 
         public void renderGrid() // The render grid function is responsible for loading the image
         {
-            // remove all picture boxes - NOTE: All things with tag "grid" will be re-rendered
-            foreach (Control control in this.Controls)
+            // if the gridPictireBox object isn't null, i.e, there is an image
+            if (gridPictureBox != null)
             {
-                if (control is PictureBox && control.Tag.ToString() == "grid")
-                {
-                    this.Controls.Remove(control);
-                }
-            }
-            // Writing the image to the form. Note that the render occurs from the exe (i.e. bin\Debug)
-            renderImage("../../assets/goBoard.png", (this.Width-(this.Height-75))/2, 30, this.Height-75, this.Height-75, "grid");
+                // remove the current image from the panel
+                gameBoardPanel.Controls.Remove(gridPictureBox);
 
+                // set the picture box to null for the next render of the image
+                gridPictureBox = null;
+            }
+
+            // render the image again using the new dimensions of the window
+            gridPictureBox = renderImage("../../assets/goBoard.png", (this.Width - (this.Height - 75)) / 2, 20, this.Height - 110, this.Height - 110, "grid");
         }
+
+        private void adjustButtons()
+        {
+            // calculate the height of each button
+            int buttonHeight = mainMenuPanel.Height / 7;
+
+            // calculate the font size based on the button height
+            int fontSize = buttonHeight / 3;
+
+            // calculate the total height of all buttons
+            int totalButtonHeight = buttonHeight * 3;
+
+            // calculate the starting y position of the first button
+            int y = mainMenuPanel.Height / 2 - totalButtonHeight / 2;
+
+            // resize and position the playButton
+            playButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
+            playButton.Location = new Point(mainMenuPanel.Width / 2 - playButton.Width / 2, y - 10);
+            playButton.Font = new Font(playButton.Font.FontFamily, fontSize);
+
+            // update the y position for the next button
+            y += buttonHeight;
+
+            // resize and position the optionsButton
+            optionsButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
+            optionsButton.Location = new Point(mainMenuPanel.Width / 2 - optionsButton.Width / 2, y);
+            optionsButton.Font = new Font(optionsButton.Font.FontFamily, fontSize);
+
+            // update the y position for the next button
+            y += buttonHeight;
+
+            // resize and position the quitButton
+            quitButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
+            quitButton.Location = new Point(mainMenuPanel.Width / 2 - quitButton.Width / 2, y + 10);
+            quitButton.Font = new Font(quitButton.Font.FontFamily, fontSize);
+        }
+
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) // Click event handler for the strip menu.
         {
@@ -67,7 +135,7 @@ namespace GoGame
             pb.Location = new Point(x, y);
             pb.Size = new Size(w, h);
             pb.Tag = tag;
-            this.Controls.Add(pb);
+            gameBoardPanel.Controls.Add(pb);
             return pb;
         }
     }
