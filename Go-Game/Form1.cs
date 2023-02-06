@@ -39,7 +39,8 @@ namespace Go_Game
                     // Creating the buttons
                     boardBtns[x, y] = new Button();
                     // Buttons need to be aligned with the form, so that they are aligned with the board correctly.
-                    boardBtns[x, y].SetBounds(250+(37*x), 70+(38*y), 25, 25);
+                    // (x*this.Height) is the gap between buttons, whilst the +this.Height*1.2 is the offset.
+                    boardBtns[x, y].SetBounds((int)((x*this.Height*0.185)+this.Height*1.22), (int)((y*this.Height*0.182) + this.Height * 0.31), this.Height/25, this.Height/25);
                     makeTransparentBtn(boardBtns[x, y]);
                     boardBtns[x, y].Click += new EventHandler(this.btnEvent_Click); // Adding the click handler to the button
                     Controls.Add(boardBtns[x, y]); // Adding the button the form
@@ -54,6 +55,7 @@ namespace Go_Game
             btn.TabStop = false; // This means that the user can't select buttons by pressing tab
             btn.FlatStyle = FlatStyle.Flat; // removing 3D effects from the button with flat styling
             btn.FlatAppearance.BorderSize = 0; // removing border
+            btn.Text = "b";
             btn.BackColor = Color.Transparent; // Making the button transparent with the form.
             return btn;
         }
