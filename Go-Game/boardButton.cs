@@ -42,7 +42,7 @@ namespace GoGame
                     boardBtns[y, x].SetBounds(45 * x, 45 * y, 45, 45);
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
-                    Program.board.addButton(boardBtns[x, y]);
+                    GameBoard.addButton(boardBtns[x, y]);
                 }
             }
         }
