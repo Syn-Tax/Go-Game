@@ -94,6 +94,22 @@ namespace GoGame
             return true;
         }
 
+        // createButtons is used for the construction and mangement of buttons
+        public void createButtons()
+        {
+            // Loop using the board 2D array. i.e this.board 
+            // Place the buttons onto the form
+            // Have them scale and resize correctly
+            // Have transparancy.
+        }
+
+        // Place stone is used to handle the stone being represented on the form and in the this.board 2D array.
+        public void placeStone()
+        {
+            // Place coloured image into button, depending on whos turn it is.
+            // Update the 2D array.
+        }
+
         public void updateGroups()
         {
             // reset groups
