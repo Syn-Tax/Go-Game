@@ -17,10 +17,11 @@ namespace GoGame
 
         // We may need other board details in order to handle the placement of stones.
 
-        public boardButton(int size)
+        public boardButton()
         {
+            // Getting the size from board.
             // initialise size
-            this.size = size;
+            // this.size = Board.getSize();
         }
 
         // createButtons is used for the construction and mangement of buttons
@@ -41,6 +42,8 @@ namespace GoGame
                     boardBtns[y, x].SetBounds(45 * x, 45 * y, 45, 45);
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
+                    GameBoard fakeBoard = new GameBoard();
+                    fakeBoard.addButton(boardBtns[x, y]);
                 }
             }
         }

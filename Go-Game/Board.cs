@@ -48,6 +48,12 @@ namespace GoGame
             this.numMoves = 0;
         }
 
+        // returns the size of the board.
+        public int getSize()
+        {
+            return size;    
+        }
+
         // returns current board position
         public int[,] getBoard()
         {

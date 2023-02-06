@@ -1,4 +1,6 @@
-﻿namespace GoGame
+﻿using System.Windows.Forms;
+
+namespace GoGame
 {
     partial class GameBoard
     {
@@ -18,6 +20,12 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        // Creating function to add board buttons to the form
+        public void addButton(Button btn)
+        {
+            this.Controls.Add(btn);
         }
 
         #region Windows Form Designer generated code
