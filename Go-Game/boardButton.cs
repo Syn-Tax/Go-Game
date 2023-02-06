@@ -10,42 +10,17 @@ using System.Windows.Forms;
 
 namespace GoGame
 {
-    internal class Button
+    internal class boardButton
     {
-        private int size;
+        // Need to get/inherit size of the board for Board.cs
+        public int size;
 
-        // 2d integer array to store board position - 0 is empty, 1 is black, 2 is white
-        private int[,] board;
-        private int player;
-        private int numMoves;
+        // We may need other board details in order to handle the placement of stones.
 
-        // list of grouped stones (required for capture and scoring logic)
-        private List<Group> groups;
-
-        // list of previous board positions (required for ko rule logic)
-        private LinkedList<int[,]> prevBoards;
-
-        public Button(int size) 
+        public boardButton(int size)
         {
             // initialise size
             this.size = size;
-
-            // initialise board
-            this.board = new int[this.size,this.size];
-            for (int i=0; i<this.size; i++)
-            {
-                for (int j=0; j<this.size; j++)
-                {
-                    this.board[i,j] = 0;
-                }
-            }
-
-            // initialise prevBoards variable
-           this. prevBoards = new LinkedList<int[,]>();
-
-            // initialise first player (to black)
-            this.player = 1;
-            this.numMoves = 0;
         }
 
         // createButtons is used for the construction and mangement of buttons
@@ -56,7 +31,7 @@ namespace GoGame
             // Loop using the board 2D array. i.e this.board 
             for (int x = 0; x < this.size; x++)
             {
-                for (int y = 0; y< this.size; y++)
+                for (int y = 0; y < this.size; y++)
                 {
                     // Placing the buttons onto the form
                     boardBtns[x, y] = new Button();
@@ -87,3 +62,11 @@ namespace GoGame
             // Place coloured image into button, depending on whos turn it is.
             // Update the 2D array.
         }
+
+        // on click event handler, mainly used for placeStone()
+        void btnEvent_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Button has been clicked");
+        }
+    }
+}
