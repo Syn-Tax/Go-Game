@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -93,35 +94,6 @@ namespace GoGame
             this.numMoves++;
             // return success
             return true;
-        }
-
-        // createButtons is used for the construction and mangement of buttons
-        public void createButtons()
-        {
-            // Creating 2D array of buttons
-            Button[,] boardBtns = new Button[this.size, this.size];
-            // Loop using the board 2D array. i.e this.board 
-            for (int x = 0; x < this.size; x++)
-            {
-                for (int y = 0; y< this.size; y++)
-                {
-                    // Placing the buttons onto the form
-                    boardBtns[x, y] = new Button();
-                    // Have them scale and resize correctly
-                    boardBtns[y, x].SetBounds(45 * x, 45 * y, 45, 45);
-                    // Have transparancy.
-                }
-            }
-            // Place the buttons onto the form
-            // Have them scale and resize correctly
-            // Have transparancy.
-        }
-
-        // Place stone is used to handle the stone being represented on the form and in the this.board 2D array.
-        public void placeStone()
-        {
-            // Place coloured image into button, depending on whos turn it is.
-            // Update the 2D array.
         }
 
         public void updateGroups()

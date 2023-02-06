@@ -47,6 +47,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Button.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="GameBoard.cs">
