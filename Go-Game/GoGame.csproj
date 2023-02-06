@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
+    <Compile Include="Region.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="GameBoard.cs">
       <SubType>Form</SubType>

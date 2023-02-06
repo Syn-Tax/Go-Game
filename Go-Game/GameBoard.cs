@@ -14,7 +14,87 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            testMoves();
             createGrid();
+        }
+
+        private void testMoves()
+        {
+            Board b = new Board(9);
+
+            b.move(4, 3, true);
+            b.move(4, 5, true);
+            b.move(2, 4, true);
+            b.move(5, 4, true);
+            b.move(6, 3, true);
+            b.move(5, 3, true);
+            b.move(5, 2, true);
+            b.move(6, 4, true);
+            b.move(7, 3, true);
+            b.move(7, 4, true);
+            b.move(3, 4, true);
+            b.move(4, 4, true);
+            b.move(3, 3, true);
+            b.move(3, 5, true);
+            b.move(2, 5, true);
+            b.move(2, 6, true);
+            b.move(3, 6, true);
+            b.move(3, 7, true);
+            b.move(2, 7, true);
+            b.move(4, 6, true);
+            b.move(1, 7, true);
+            b.move(1, 6, true);
+            b.move(1, 5, true);
+            b.move(0, 6, true);
+            b.move(0, 7, true);
+            b.move(3, 6, true);
+            b.move(0, 5, true);
+            b.move(6, 2, true);
+            b.move(7, 2, true);
+            b.move(6, 1, true);
+            b.move(5, 1, true);
+            b.move(7, 1, true);
+            b.move(8, 1, true);
+            b.move(8, 3, true);
+            b.move(7, 0, true);
+            b.move(8, 2, true);
+            b.move(6, 0, true);
+            b.move(8, 0, true);
+            b.move(5, 0, true);
+            b.move(4, 1, true);
+            b.move(4, 2, true);
+            b.move(2, 8, true);
+            b.move(8, 1, true);
+            b.move(1, 8, true);
+            b.move(7, 3, true);
+            b.move(8, 0, true);
+            b.move(2, 1, true);
+            b.move(8, 1, true);
+            b.move(6, 7, true);
+            b.move(6, 3, true);
+            b.move(7, 6, true);
+            b.move(7, 5, true);
+            b.move(6, 6, true);
+            b.move(5, 6, true);
+            b.move(5, 7, true);
+            b.move(4, 7, true);
+            b.move(8, 7, true);
+            b.move(6, 5, true);
+            b.move(7, 8, true);
+            b.move(5, 8, true);
+            b.move(6, 8, true);
+            b.move(4, 8, true);
+            b.move(8, 5, true);
+            b.move(8, 4, true);
+            b.move(8, 6, true);
+            b.move(0, 8, true);
+            //b.move(-1, -1, true);
+            //b.move(7, 2, true);
+            //b.move(-1, -1, true);
+            //b.move(-1, -1, true);
+
+            b.updateRegions();
+            b.printBoard();
         }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked
