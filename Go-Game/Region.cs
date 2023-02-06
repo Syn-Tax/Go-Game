@@ -14,6 +14,8 @@ namespace GoGame
 
         private bool? isEnclosed;
 
+        private int? player;
+
         public Region()
         {
             this.surroundingGroups = new List<Group>();
@@ -43,6 +45,41 @@ namespace GoGame
         public List<Group> getSurrounding()
         {
             return this.surroundingGroups;
+        }
+
+        public int getPlayer()
+        {
+            if (this.player.HasValue)
+            {
+                return (int)this.player;
+            } else
+            {
+                int blackCount = 0;
+                int whiteCount = 0;
+
+                foreach (Group g in this.surroundingGroups)
+                {
+                    if (g.getPlayer() == 1)
+                    {
+                        blackCount += g.getStones().Count;
+                    } else if (g.getPlayer() == 2)
+                    {
+                        whiteCount += g.getStones().Count;
+                    }
+                }
+                if (blackCount > whiteCount)
+                {
+                    this.player = 1;
+                } else if (whiteCount > blackCount)
+                {
+                    this.player = 2;
+                } else
+                {
+                    this.player = 0;
+                }
+
+                return (int)this.player;
+            }
         }
 
         public bool pointSurrounds(int row, int col)

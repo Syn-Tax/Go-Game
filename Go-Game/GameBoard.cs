@@ -95,6 +95,8 @@ namespace GoGame
 
             b.updateRegions();
             b.printBoard();
+            Console.Write("\n\n");
+            Console.WriteLine(b.calculateScore(5.5f).ToString());
         }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked

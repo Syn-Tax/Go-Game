@@ -14,13 +14,17 @@ namespace GoGame
         private List<Vector> liberties;
         private bool? isSafe;
         private List<Region> healthyRegions;
+        private List<Region> contactingRegions;
+        private Chain chain;
 
         public Group(int player) 
         { 
             this.stones = new List<Vector>();
             this.liberties = new List<Vector>();
             this.healthyRegions = new List<Region>();
+            this.contactingRegions = new List<Region>();
             this.player = player;
+            this.chain = new Chain(new List<Group> { this }, new List<Vector>());
         }
 
         public void addStone(int row, int col)
@@ -41,6 +45,21 @@ namespace GoGame
         public int getPlayer()
         {
             return this.player;
+        }
+
+        public void setChain(Chain c)
+        {
+            this.chain = c;
+        }
+
+        public List<Region> getHealthy()
+        {
+            return this.healthyRegions;
+        }
+
+        public void addRegion(Region region)
+        {
+            this.contactingRegions.Add(region);
         }
 
         public void calcLiberties(Board board)
@@ -96,16 +115,22 @@ namespace GoGame
 
         private bool calculateSafety(Board board)
         {
-            int totalSLC = 0;
-            foreach (Region r in this.healthyRegions)
-            {
-                totalSLC += sureLibertyCount(board, r);
-            }
+            int totalSLC = this.chain.sureLibertyCount(board);
 
             if (totalSLC >= 2)
             {
+                // group is provably alive!!! (algorithm from: http://webdocs.cs.ualberta.ca/~mmueller/ps/gpw97.pdf)
                 return true;
             }
+
+            foreach (Region r in this.contactingRegions)
+            {
+                if (r.getPlayer() == this.player)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -128,7 +153,7 @@ namespace GoGame
             }
         }
 
-        private int sureLibertyCount(Board board, Region region)
+        public int sureLiberty(Board board, Region region)
         {
             List<Group> G = new List<Group>();
             foreach (Group g in board.getGroups())
@@ -144,6 +169,16 @@ namespace GoGame
             }
 
             return 1;
+        }
+
+        public int sureLibertyCount(Board board, List<Region> regions)
+        {
+            int count = 0;
+            foreach (Region r in regions)
+            {
+                count += sureLiberty(board, r);
+            }
+            return count;
         }
     }
 }

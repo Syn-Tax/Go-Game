@@ -23,8 +23,15 @@ namespace GoGame
         // list of regions (required for scoring logic)
         private List<Region> regions;
 
+        // list of chains (also required for scoring logic)
+        private List<Chain> chains;
+
         // list of previous board positions (required for ko rule logic)
         private LinkedList<int[,]> prevBoards;
+
+        // integers for tracking number of prisoners per player
+        private int blackPrisoners;
+        private int whitePrisoners;
 
         public Board(int size) 
         {
@@ -47,6 +54,10 @@ namespace GoGame
             // initialise first player (to black)
             this.player = 1;
             this.numMoves = 0;
+
+            // initialise prisoner vars
+            this.blackPrisoners = 0;
+            this.whitePrisoners = 0;
         }
 
         // returns current board position
@@ -69,6 +80,11 @@ namespace GoGame
         public List<Group> getGroups()
         {
             return this.groups;
+        }
+
+        public List<Chain> getChains()
+        {
+            return this.chains;
         }
 
         // returns true if move was legally made, false if move was illegal and could not be played
@@ -228,7 +244,7 @@ namespace GoGame
             {
                 for (int col = 0; col < this.size; col++)
                 {
-                    // check if there's a stone here (if there is, continue
+                    // check if there's a stone here (if there is, continue)
                     if (this.board[row, col] != 0)
                     {
                         continue;
@@ -275,10 +291,10 @@ namespace GoGame
                 region.addPoint(x, y);
                 
                 // find surrounding groups
-                if (validCoord(x+1,y) && !region.pointSurrounds(x+1,y) && board[x+1,y] != 0) { region.addGroup(this.groupAt(x + 1, y)); }
-                if (validCoord(x-1,y) && !region.pointSurrounds(x-1,y) && board[x-1,y] != 0) { region.addGroup(this.groupAt(x - 1, y)); }
-                if (validCoord(x,y+1) && !region.pointSurrounds(x,y+1) && board[x,y+1] != 0) { region.addGroup(this.groupAt(x, y + 1)); }
-                if (validCoord(x,y-1) && !region.pointSurrounds(x,y-1) && board[x,y-1] != 0) { region.addGroup(this.groupAt(x, y - 1)); }
+                if (validCoord(x+1,y) && !region.pointSurrounds(x+1,y) && board[x+1,y] != 0) { region.addGroup(this.groupAt(x + 1, y)); this.groupAt(x + 1, y).addRegion(region); }
+                if (validCoord(x-1,y) && !region.pointSurrounds(x-1,y) && board[x-1,y] != 0) { region.addGroup(this.groupAt(x - 1, y)); this.groupAt(x - 1, y).addRegion(region); }
+                if (validCoord(x,y+1) && !region.pointSurrounds(x,y+1) && board[x,y+1] != 0) { region.addGroup(this.groupAt(x, y + 1)); this.groupAt(x, y + 1).addRegion(region); }
+                if (validCoord(x,y-1) && !region.pointSurrounds(x,y-1) && board[x,y-1] != 0) { region.addGroup(this.groupAt(x, y - 1)); this.groupAt(x, y - 1).addRegion(region); }
 
                 // check north
                 if (validCoord(x+1, y) && visited[x+1, y] != 1 && this.board[x +1, y] == 0)
@@ -312,6 +328,47 @@ namespace GoGame
             return region;
         }
 
+        public void calculateChains()
+        {
+            this.chains = new List<Chain>();
+
+            foreach (Group g in this.groups)
+            {
+                foreach (Group G in this.groups)
+                {
+                    if (g == G) { continue; }
+
+                    List<Vector> sharedLiberties = (List<Vector>)g.getLiberties().Intersect(G.getLiberties());
+
+                    if (sharedLiberties.Count >= 2)
+                    {
+                        bool inChain = false;
+                        foreach (Chain chain in this.chains)
+                        {
+                            if (chain.inChain(g) || chain.inChain(G))
+                            {
+                                inChain = true;
+                                chain.addGroup(G);
+                                chain.addGroup(g);
+                                chain.addPoints(sharedLiberties);
+
+                                G.setChain(chain);
+                                g.setChain(chain);
+                                break;
+                            }
+                        }
+                        if (!inChain)
+                        {
+                            Chain c = new Chain(new List<Group> { g, G }, sharedLiberties);
+                            this.chains.Add(c);
+                            G.setChain(c);
+                            g.setChain(c);
+                        }
+                    }
+                }
+            }
+        }
+
         private Group groupAt(int row, int col)
         {
             foreach (Group group in this.groups)
@@ -331,6 +388,47 @@ namespace GoGame
             return true;
         }
 
+        private void removeDead()
+        {
+            for (int i=0; i<this.groups.Count; i++)
+            {
+                if (!this.groups[i].getSafety(this))
+                {
+                    foreach (Vector p in this.groups[i].getStones())
+                    {
+                        this.board[(int)p.X, (int)p.Y] = 0;
+                    }
+                    this.groups.RemoveAt(i);
+                }
+            }
+        }
+
+        public float calculateScore(float komi)
+        {
+            this.removeDead();
+            this.updateGroups();
+            this.updateRegions();
+
+            float score = 0;
+
+            foreach (Region r in this.regions)
+            {
+                if (r.getPlayer() == 1)
+                {
+                    score += r.getPoints().Count;
+                } else if (r.getPlayer() == 2)
+                {
+                    score -= r.getPoints().Count;
+                }
+            }
+            score += blackPrisoners;
+            score -= whitePrisoners;
+
+            score -= komi;
+
+            return score;
+        }
+
         // returns true if capture is valid, false otherwise
         private bool calcCaptures()
         {
@@ -346,7 +444,14 @@ namespace GoGame
                     {
                         tempBoard[(int)p.X, (int)p.Y] = 0;
                     }
-                    groups.RemoveAt(i);
+                    if (this.player == 1)
+                    {
+                        this.blackPrisoners += this.groups[i].getStones().Count;
+                    } else
+                    {
+                        this.whitePrisoners += this.groups[i].getStones().Count;
+                    }
+                    this.groups.RemoveAt(i);
                 } 
             }
 
