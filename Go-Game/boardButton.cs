@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace GoGame
         }
 
         // createButtons is used for the construction and mangement of buttons
-        public void createButtons()
+        public void createButtons(GameBoard gb)
         {
             // Creating 2D array of buttons
             Button[,] boardBtns = new Button[this.size, this.size];
@@ -36,13 +37,14 @@ namespace GoGame
                 {
                     // Placing the buttons onto the form
                     boardBtns[x, y] = new Button();
+                    boardBtns[x, y].Text = "haha";
                     // Have transparancy.
                     makeTransparentBtn(boardBtns[x, y]);
                     // Have them scale and resize correctly
                     boardBtns[y, x].SetBounds(45 * x, 45 * y, 45, 45);
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
-                    GameBoard.addButton(boardBtns[x, y]);
+                    gb.addButton(boardBtns[x, y]);
                 }
             }
         }

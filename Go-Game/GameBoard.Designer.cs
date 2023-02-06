@@ -53,6 +53,8 @@ namespace GoGame
             this.gameBoardPanel.SuspendLayout();
             this.optionMenuPanel.SuspendLayout();
             this.SuspendLayout();
+            boardButton b1 = new boardButton();
+            b1.createButtons(this);
             // 
             // menuStrip1
             // 
