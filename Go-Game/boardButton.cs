@@ -15,14 +15,12 @@ namespace GoGame
     {
         // Need to get/inherit size of the board for Board.cs
         public int size;
-
         // We may need other board details in order to handle the placement of stones.
 
         public boardButton()
         {
-            // Getting the size from board.
-            // initialise size
-            // this.size = Board.getSize();
+            // This should be updated if the board size changes
+            this.size = 9;
         }
 
         // createButtons is used for the construction and mangement of buttons
@@ -41,7 +39,7 @@ namespace GoGame
                     // Have transparancy.
                     makeTransparentBtn(boardBtns[x, y]);
                     // Have them scale and resize correctly
-                    boardBtns[y, x].SetBounds(45 * x, 45 * y, 45, 45);
+                    boardBtns[x, y].SetBounds(45 * x, 45 * y, 45, 45);
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
                     gb.addButton(boardBtns[x, y]);
