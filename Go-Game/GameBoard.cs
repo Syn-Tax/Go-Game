@@ -14,7 +14,22 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            placeBtns();
             createGrid();
+        }
+
+        // Creating function to add board buttons to the form
+        public void addButton(Button btn)
+        {
+            gameBoardPanel.Controls.Add(btn);
+
+        }
+
+        private void placeBtns()
+        {
+            // Defining an instance of board buttons, so that buttons can be added to the form.
+            boardButton b1 = new boardButton();
+            b1.createButtons(this);
         }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked

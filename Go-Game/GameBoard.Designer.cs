@@ -22,12 +22,6 @@ namespace GoGame
             base.Dispose(disposing);
         }
 
-        // Creating function to add board buttons to the form
-        public void addButton(Button btn)
-        {
-            this.Controls.Add(btn);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -53,9 +47,6 @@ namespace GoGame
             this.gameBoardPanel.SuspendLayout();
             this.optionMenuPanel.SuspendLayout();
             this.SuspendLayout();
-            // Defining an instance of board buttons to add to the 
-            boardButton b1 = new boardButton();
-            b1.createButtons(this);
             // 
             // menuStrip1
             // 
@@ -99,7 +90,7 @@ namespace GoGame
             this.gameBoardPanel.TabIndex = 3;
             // 
             // gameBoardBackButton
-            // 
+            //
             this.gameBoardBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameBoardBackButton.Location = new System.Drawing.Point(22, 22);
             this.gameBoardBackButton.Name = "gameBoardBackButton";
