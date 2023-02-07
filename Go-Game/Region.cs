@@ -119,7 +119,7 @@ namespace GoGame
 
         public void printRegion()
         {
-            Console.WriteLine(this.points.Count().ToString() + " " + this.getIsEnclosed().ToString());
+            Console.WriteLine(this.points.Count().ToString() + " " + this.getPlayer().ToString());
             foreach (Vector point in this.points)
             {
                 Console.Write(point.ToString() + " ");

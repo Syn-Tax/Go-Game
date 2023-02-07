@@ -48,7 +48,7 @@ namespace GoGame
             List<Region> regions = new List<Region>();
             foreach (Group g in this.groups)
             {
-                regions.AddRange(g.getHealthy());
+                regions.AddRange(g.getContacting());
             }
 
             int max = 0;

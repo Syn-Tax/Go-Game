@@ -16,6 +16,7 @@ namespace GoGame
         private List<Region> healthyRegions;
         private List<Region> contactingRegions;
         private Chain chain;
+        public int slc;
 
         public Group(int player) 
         { 
@@ -57,6 +58,11 @@ namespace GoGame
             return this.healthyRegions;
         }
 
+        public List<Region> getContacting()
+        {
+            return this.contactingRegions;
+        }
+
         public void addRegion(Region region)
         {
             this.contactingRegions.Add(region);
@@ -88,7 +94,7 @@ namespace GoGame
 
         public void printGroup(Board board)
         {
-            Console.WriteLine(this.stones.Count().ToString() + " " + this.player.ToString() + " " + this.liberties.Count().ToString() + " " + this.getSafety(board).ToString());
+            Console.WriteLine(this.stones.Count().ToString() + " " + this.player.ToString() + " " + this.slc.ToString() + " " + this.getSafety(board).ToString());
             foreach (Vector stone in this.stones)
             {
                 Console.Write(stone.ToString() + " ");
@@ -101,9 +107,9 @@ namespace GoGame
             Console.Write("\n\n");
         }
 
-        public bool getSafety(Board board)
+        public bool getSafety(Board board, bool recalculate=false)
         {
-            if (this.isSafe.HasValue)
+            if (this.isSafe.HasValue && !recalculate)
             {
                 return (bool)this.isSafe;
             } else
@@ -116,6 +122,7 @@ namespace GoGame
         private bool calculateSafety(Board board)
         {
             int totalSLC = this.chain.sureLibertyCount(board);
+            this.slc = totalSLC;
 
             if (totalSLC >= 2)
             {
@@ -125,7 +132,7 @@ namespace GoGame
 
             foreach (Region r in this.contactingRegions)
             {
-                if (r.getPlayer() == this.player)
+                if (r.getPlayer() == this.player && r.getPoints().Count > 5)
                 {
                     return true;
                 }
@@ -161,7 +168,7 @@ namespace GoGame
                 if (g.getPlayer() == this.player) { G.Add(g); }
             }
 
-            if (!this.healthyRegions.Contains(region)) { return 0; }
+            if (!this.contactingRegions.Contains(region)) { return 0; }
 
             foreach (Group g in region.getSurrounding())
             {

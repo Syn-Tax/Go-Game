@@ -29,11 +29,14 @@ namespace GoGame
         // list of previous board positions (required for ko rule logic)
         private LinkedList<int[,]> prevBoards;
 
-        // integers for tracking number of prisoners per player
-        private int blackPrisoners;
-        private int whitePrisoners;
+        // integers for tracking prisoners per player
+        private List<Vector> blackPrisoners;
+        private List<Vector> whitePrisoners;
 
-        public Board(int size) 
+        private bool lastMovePass;
+        private float komi;
+
+        public Board(int size, float komi) 
         {
             // initialise size
             this.size = size;
@@ -56,8 +59,11 @@ namespace GoGame
             this.numMoves = 0;
 
             // initialise prisoner vars
-            this.blackPrisoners = 0;
-            this.whitePrisoners = 0;
+            this.blackPrisoners = new List<Vector>();
+            this.whitePrisoners = new List<Vector>();
+
+            this.lastMovePass = false;
+            this.komi = komi;
         }
 
         // returns current board position
@@ -88,16 +94,27 @@ namespace GoGame
         }
 
         // returns true if move was legally made, false if move was illegal and could not be played
-        public bool move(int row, int col, bool switchPlayer)
+        public bool move(int row, int col, GameBoard gb)
         {
             // check for pass
             if (row == -1 || col == -1)
             {
-                if (switchPlayer)
-                {
-                    this.player = (this.player % 2) + 1;
-                }
+                this.player = (this.player % 2) + 1;
                 this.numMoves++;
+
+                if (this.lastMovePass)
+                {
+                    float score = this.calculateScore(this.komi);
+                    this.printBoard();
+                    Console.WriteLine("\n\n" + score.ToString());
+                    Console.WriteLine(string.Join(" ", this.blackPrisoners));
+                    Console.WriteLine(string.Join(" ", this.whitePrisoners));
+
+                } else
+                {
+                    this.lastMovePass = true;
+                }
+
                 return true;
             }
 
@@ -131,10 +148,7 @@ namespace GoGame
             }
 
             // switch player
-            if (switchPlayer)
-            {
-                this.player = (this.player % 2) + 1;
-            }
+            this.player = (this.player % 2) + 1;
             this.numMoves++;
 
             // return success
@@ -337,35 +351,61 @@ namespace GoGame
                 foreach (Group G in this.groups)
                 {
                     if (g == G) { continue; }
+                    if (g.getPlayer() != G.getPlayer()) { continue; }
 
-                    List<Vector> sharedLiberties = (List<Vector>)g.getLiberties().Intersect(G.getLiberties());
+                    List<Vector> sharedLiberties = (List<Vector>)g.getLiberties().Intersect(G.getLiberties()).ToList();
 
                     if (sharedLiberties.Count >= 2)
                     {
-                        bool inChain = false;
-                        foreach (Chain chain in this.chains)
+                        this.addToChain(g, G, sharedLiberties);
+                    } else
+                    {
+                        if (sharedLiberties.Count == 1)
                         {
-                            if (chain.inChain(g) || chain.inChain(G))
-                            {
-                                inChain = true;
-                                chain.addGroup(G);
-                                chain.addGroup(g);
-                                chain.addPoints(sharedLiberties);
+                            int x = (int)sharedLiberties[0].X;
+                            int y = (int)sharedLiberties[0].Y;
 
-                                G.setChain(chain);
-                                g.setChain(chain);
-                                break;
+                            List<Vector> pointLiberties = new List<Vector>();
+
+                            if (this.validCoord(x + 1, y) && !pointLiberties.Contains(new Vector(x + 1, y)) && this.board[x + 1, y] == 0) { pointLiberties.Add(new Vector(x + 1, y)); }
+                            if (this.validCoord(x - 1, y) && !pointLiberties.Contains(new Vector(x - 1, y)) && this.board[x - 1, y] == 0) { pointLiberties.Add(new Vector(x - 1, y)); }
+                            if (this.validCoord(x, y + 1) && !pointLiberties.Contains(new Vector(x, y + 1)) && this.board[x, y + 1] == 0) { pointLiberties.Add(new Vector(x, y + 1)); }
+                            if (this.validCoord(x, y - 1) && !pointLiberties.Contains(new Vector(x, y - 1)) && this.board[x, y - 1] == 0) { pointLiberties.Add(new Vector(x, y - 1)); }
+
+                            if (pointLiberties.Count <= 1)
+                            {
+                                this.addToChain(g, G, sharedLiberties);
                             }
-                        }
-                        if (!inChain)
-                        {
-                            Chain c = new Chain(new List<Group> { g, G }, sharedLiberties);
-                            this.chains.Add(c);
-                            G.setChain(c);
-                            g.setChain(c);
                         }
                     }
                 }
+            }
+        }
+
+        private void addToChain(Group g, Group G, List<Vector> sharedLiberties)
+        {
+
+            bool inChain = false;
+            foreach (Chain chain in this.chains)
+            {
+                if (chain.inChain(g) || chain.inChain(G))
+                {
+                    inChain = true;
+                    chain.addGroup(G);
+                    chain.addGroup(g);
+                    chain.addPoints(sharedLiberties);
+
+                    G.setChain(chain);
+                    g.setChain(chain);
+                    break;
+                }
+            }
+            if (!inChain)
+            {
+                Chain c = new Chain(new List<Group> { g, G }, sharedLiberties);
+                this.chains.Add(c);
+                G.setChain(c);
+                g.setChain(c);
             }
         }
 
@@ -397,6 +437,13 @@ namespace GoGame
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         this.board[(int)p.X, (int)p.Y] = 0;
+                        if (this.groups[i].getPlayer() == 2)
+                        {
+                            this.blackPrisoners.Add(p);
+                        } else
+                        {
+                            this.whitePrisoners.Add(p);
+                        }
                     }
                     this.groups.RemoveAt(i);
                 }
@@ -405,6 +452,14 @@ namespace GoGame
 
         public float calculateScore(float komi)
         {
+            this.updateGroups();
+            this.updateRegions();
+            this.calculateChains();
+            foreach (Group group in this.groups)
+            {
+                group.getSafety(this, true);
+            }
+
             this.removeDead();
             this.updateGroups();
             this.updateRegions();
@@ -421,8 +476,8 @@ namespace GoGame
                     score -= r.getPoints().Count;
                 }
             }
-            score += blackPrisoners;
-            score -= whitePrisoners;
+            score += blackPrisoners.Count;
+            score -= whitePrisoners.Count;
 
             score -= komi;
 
@@ -443,13 +498,13 @@ namespace GoGame
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         tempBoard[(int)p.X, (int)p.Y] = 0;
-                    }
-                    if (this.player == 1)
-                    {
-                        this.blackPrisoners += this.groups[i].getStones().Count;
-                    } else
-                    {
-                        this.whitePrisoners += this.groups[i].getStones().Count;
+                        if (this.player == 1)
+                        {
+                            this.blackPrisoners.Add(p);
+                        } else
+                        {
+                            this.whitePrisoners.Add(p);
+                        }
                     }
                     this.groups.RemoveAt(i);
                 } 
@@ -527,7 +582,7 @@ namespace GoGame
             Console.WriteLine("GROUPS\n");
             foreach (Group group in this.groups)
             {
-                group.calculateHealthy(this);
+                //group.calculateHealthy(this);
                 group.printGroup(this);
             }
             Console.Write("\n\n");
@@ -535,6 +590,17 @@ namespace GoGame
             foreach (Region region in this.regions)
             {
                 region.printRegion();
+            }
+
+            Console.Write("\n\n");
+            Console.WriteLine("CHAINS");
+            foreach (Chain chain in this.chains)
+            {
+                foreach(Group group in chain.getGroups())
+                {
+                    group.printGroup(this);
+                }
+                Console.Write("\n\n");
             }
         }
     }
