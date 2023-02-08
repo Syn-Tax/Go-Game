@@ -121,7 +121,14 @@ namespace GoGame
 
         private bool calculateSafety(Board board)
         {
-            int totalSLC = this.chain.sureLibertyCount(board);
+            int totalSLC;
+            if (this.chain.getGroups().Count == 1)
+            {
+                totalSLC = this.sureLibertyCount(board, this.contactingRegions);
+            } else
+            {
+                totalSLC = this.chain.sureLibertyCount(board);
+            }
             this.slc = totalSLC;
 
             if (totalSLC >= 2)

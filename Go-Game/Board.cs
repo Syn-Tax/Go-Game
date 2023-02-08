@@ -105,7 +105,7 @@ namespace GoGame
                 if (this.lastMovePass)
                 {
                     float score = this.calculateScore(this.komi);
-                    this.printBoard();
+                    //this.printBoard();
                     Console.WriteLine("\n\n" + score.ToString());
                     Console.WriteLine(string.Join(" ", this.blackPrisoners));
                     Console.WriteLine(string.Join(" ", this.whitePrisoners));
@@ -432,7 +432,7 @@ namespace GoGame
         {
             for (int i=0; i<this.groups.Count; i++)
             {
-                if (!this.groups[i].getSafety(this))
+                if (!this.groups[i].getSafety(this, false))
                 {
                     foreach (Vector p in this.groups[i].getStones())
                     {
@@ -463,6 +463,8 @@ namespace GoGame
             this.removeDead();
             this.updateGroups();
             this.updateRegions();
+
+            this.printBoard();
 
             float score = 0;
 
