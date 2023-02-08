@@ -47,6 +47,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="boardButton.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Chain.cs" />
     <Compile Include="Region.cs" />

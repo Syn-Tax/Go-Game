@@ -1,4 +1,6 @@
-﻿namespace GoGame
+﻿using System.Windows.Forms;
+
+namespace GoGame
 {
     partial class GameBoard
     {
@@ -88,7 +90,7 @@
             this.gameBoardPanel.TabIndex = 3;
             // 
             // gameBoardBackButton
-            // 
+            //
             this.gameBoardBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameBoardBackButton.Location = new System.Drawing.Point(22, 22);
             this.gameBoardBackButton.Name = "gameBoardBackButton";
