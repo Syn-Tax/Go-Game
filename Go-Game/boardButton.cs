@@ -18,6 +18,9 @@ namespace GoGame
         private GameBoard gameBoard;
         private Button[,] boardBtns;
 
+        private Button passBtn;
+        private Button resignBtn;
+
         private Color boardColor = Color.FromArgb(219, 176, 107);
         private Color blackStone = Color.FromArgb(0, 0, 0);
         private Color whiteStone = Color.FromArgb(255, 255, 255);
@@ -52,6 +55,19 @@ namespace GoGame
                     this.gameBoard.addButton(this.boardBtns[row, col]);
                 }
             }
+
+            // create pass & resign button
+            this.passBtn = new Button();
+            this.passBtn.SetBounds(650, 100, 100, 50);
+            this.passBtn.Text = "Pass";
+            this.passBtn.Click += new EventHandler(this.passBtn_Click);
+            this.gameBoard.addButton(this.passBtn);
+
+            this.resignBtn = new Button();
+            this.resignBtn.SetBounds(650, 200, 100, 50);
+            this.resignBtn.Text = "Resign";
+            this.resignBtn.Click += new EventHandler(this.resignBtn_Click);
+            this.gameBoard.addButton(this.resignBtn);
         }
 
         // Makes buttons transparaent.
@@ -64,7 +80,7 @@ namespace GoGame
             return btn;
         }
 
-        // Place stone is used to handle the stone being represented on the form and in the this.board 2D array.
+        // render all stones from the 2d array in the Board class
         public void renderStones()
         {
             for (int row = 0; row < this.board.getSize(); row ++)
@@ -85,8 +101,16 @@ namespace GoGame
             }
         }
 
-        // on click event handler, mainly used for placeStone()
-        void btnEvent_Click(object sender, EventArgs e)
+        private void illegalMove()
+        {
+            // Creating a message box indicate illegal move
+            DialogResult illegalMove;
+            illegalMove = MessageBox.Show("Last move was Illegal!!!", "Illegal Move!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        // on click event handler, deals with placing stones on the board
+        private void btnEvent_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
             int row = Int32.Parse(btn.Tag.ToString().Split()[0]);
@@ -95,12 +119,19 @@ namespace GoGame
             bool isLegal = this.board.move(row, col, this.gameBoard);
             if (!isLegal)
             {
-
-                // Creating a message box indicate illegal move
-                DialogResult illegalMove;
-                illegalMove = MessageBox.Show("Last move was Illegal!!!", "Illegal Move!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                illegalMove();
             }
             renderStones();
+        }
+
+        private void passBtn_Click(object sender, EventArgs e)
+        {
+            this.board.move(-1, -1, this.gameBoard);
+        }
+
+        private void resignBtn_Click(object sender, EventArgs e)
+        {
+            this.board.move(-2, -2, this.gameBoard);
         }
     }
 }

@@ -104,7 +104,12 @@ namespace GoGame
         // returns true if move was legally made, false if move was illegal and could not be played
         public bool move(int row, int col, GameBoard gb)
         {
-            Console.WriteLine("Move at: " + row.ToString() + "," + col.ToString());
+            // check for resignation
+            if (row == -2 || col == -2)
+            {
+                gb.finishGame((this.player % 2) + 1, 0, true);
+                return true;
+            }
             // check for pass
             if (row == -1 || col == -1)
             {
@@ -114,10 +119,13 @@ namespace GoGame
                 if (this.lastMovePass)
                 {
                     float score = this.calculateScore(this.komi);
-                    //this.printBoard();
-                    Console.WriteLine("\n\n" + score.ToString());
-                    Console.WriteLine(string.Join(" ", this.blackPrisoners));
-                    Console.WriteLine(string.Join(" ", this.whitePrisoners));
+                    if (score < 0)
+                    {
+                        gb.finishGame(2, score * -1f);
+                    } else
+                    {
+                        gb.finishGame(1, score);
+                    }
 
                 }
                 else
@@ -445,7 +453,6 @@ namespace GoGame
             {
                 if (!(bool)this.groups[i].getSafety(this))
                 {
-                    Console.WriteLine("Found dead group with stone at: " + this.groups[i].getStones()[0].ToString());
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         this.board[(int)p.X, (int)p.Y] = 0;
