@@ -20,30 +20,50 @@ namespace GoGame
         // list of grouped stones (required for capture and scoring logic)
         private List<Group> groups;
 
+        // list of regions (required for scoring logic)
+        private List<Region> regions;
+
+        // list of chains (also required for scoring logic)
+        private List<Chain> chains;
+
         // list of previous board positions (required for ko rule logic)
         private LinkedList<int[,]> prevBoards;
 
-        public Board(int size) 
+        // integers for tracking prisoners per player
+        private List<Vector> blackPrisoners;
+        private List<Vector> whitePrisoners;
+
+        private bool lastMovePass;
+        private float komi;
+
+        public Board(int size, float komi)
         {
             // initialise size
             this.size = size;
 
             // initialise board
-            this.board = new int[this.size,this.size];
-            for (int i=0; i<this.size; i++)
+            this.board = new int[this.size, this.size];
+            for (int i = 0; i < this.size; i++)
             {
-                for (int j=0; j<this.size; j++)
+                for (int j = 0; j < this.size; j++)
                 {
-                    this.board[i,j] = 0;
+                    this.board[i, j] = 0;
                 }
             }
 
             // initialise prevBoards variable
-           this. prevBoards = new LinkedList<int[,]>();
+            this.prevBoards = new LinkedList<int[,]>();
 
             // initialise first player (to black)
             this.player = 1;
             this.numMoves = 0;
+
+            // initialise prisoner vars
+            this.blackPrisoners = new List<Vector>();
+            this.whitePrisoners = new List<Vector>();
+
+            this.lastMovePass = false;
+            this.komi = komi;
         }
 
         // returns current board position
@@ -58,17 +78,55 @@ namespace GoGame
             return this.player;
         }
 
-        // returns true if move was legally made, false if move was illegal and could not be played
-        public bool move(int row, int col, bool switchPlayer)
+        public List<Region> getRegions()
         {
+            return this.regions;
+        }
+
+        public List<Group> getGroups()
+        {
+            return this.groups;
+        }
+
+        public List<Chain> getChains()
+        {
+            return this.chains;
+        }
+
+        // returns true if move was legally made, false if move was illegal and could not be played
+        public bool move(int row, int col, GameBoard gb)
+        {
+            // check for pass
+            if (row == -1 || col == -1)
+            {
+                this.player = (this.player % 2) + 1;
+                this.numMoves++;
+
+                if (this.lastMovePass)
+                {
+                    float score = this.calculateScore(this.komi);
+                    //this.printBoard();
+                    Console.WriteLine("\n\n" + score.ToString());
+                    Console.WriteLine(string.Join(" ", this.blackPrisoners));
+                    Console.WriteLine(string.Join(" ", this.whitePrisoners));
+
+                }
+                else
+                {
+                    this.lastMovePass = true;
+                }
+
+                return true;
+            }
+
             // check if already a stone there
-            if (this.board[row,col] != 0)
+            if (this.board[row, col] != 0)
             {
                 return false; // already a stone at board pos x,y
             }
-            
+
             // make move
-            this.board[row,col] = this.player;
+            this.board[row, col] = this.player;
 
 
             // update groups & calculate captures
@@ -84,12 +142,16 @@ namespace GoGame
                 this.prevBoards.RemoveLast();
             }
 
-            // switch player
-            if (switchPlayer)
+            // recalculate liberties
+            foreach (Group g in this.groups)
             {
-                this.player = (this.player % 2) + 1;
+                g.calcLiberties(this);
             }
+
+            // switch player
+            this.player = (this.player % 2) + 1;
             this.numMoves++;
+
             // return success
             return true;
         }
@@ -100,9 +162,9 @@ namespace GoGame
             this.groups = new List<Group>();
 
             // loop through every position
-            for (int row=0; row<this.size; row++)
+            for (int row = 0; row < this.size; row++)
             {
-                for (int col=0; col<this.size; col++)
+                for (int col = 0; col < this.size; col++)
                 {
                     // check if there's a stone here
                     if (this.board[row, col] == 0)
@@ -123,18 +185,12 @@ namespace GoGame
                     if (inGroup) { continue; }
 
                     // create a new group from current location
-                    groups.Add(createGroup(row, col));
+                    Group g = new Group(this.board[row, col]);
+
+                    g = traverseGroup(row, col, g);
+                    this.groups.Add(g);
                 }
             }
-        }
-
-        private Group createGroup(int row, int col)
-        {
-            Group g = new Group(this.board[row, col]);
-
-            g = traverseGroup(row, col, g);
-
-            return g;
         }
 
         // BFS based flood-fill algorithm
@@ -156,53 +212,281 @@ namespace GoGame
                 int y = (int)p.Y;
                 queue.RemoveAt(0);
 
-                group.addStone((int)p.X, (int)p.Y);
+                group.addStone(x, y);
 
-                // find liberties
-                if (validCoord(x+1,y) && !liberties.Contains(new Vector(x+1,y)) && board[x+1,y] == 0) { liberties.Add(new Vector(x + 1, y)); }
-                if (validCoord(x-1,y) && !liberties.Contains(new Vector(x-1,y)) && board[x-1,y] == 0) { liberties.Add(new Vector(x - 1, y)); }
-                if (validCoord(x,y+1) && !liberties.Contains(new Vector(x,y+1)) && board[x,y+1] == 0) { liberties.Add(new Vector(x, y + 1)); }
-                if (validCoord(x,y-1) && !liberties.Contains(new Vector(x,y-1)) && board[x,y-1] == 0) { liberties.Add(new Vector(x, y - 1)); }
 
                 // check north
-                if (validCoord(x+1, y) && visited[x+1, y] != 1 && this.board[x +1, y] == group.getPlayer())
+                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && this.board[x + 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x + 1, y));
-                    visited[x + 1, y] = 1; 
+                    visited[x + 1, y] = 1;
                 }
 
                 // check south
-                if (validCoord(x-1, y) && visited[x-1, y] != 1 && this.board[x-1, y] == group.getPlayer())
+                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && this.board[x - 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x - 1, y));
-                    visited[x - 1, y] = 1; 
+                    visited[x - 1, y] = 1;
                 }
 
                 // check east
-                if (validCoord(x, y+1) && visited[x, y+1] != 1 && this.board[x, y+1] == group.getPlayer())
+                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && this.board[x, y + 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y + 1));
-                    visited[x, y + 1] = 1; 
+                    visited[x, y + 1] = 1;
                 }
 
                 // check west
-                if (validCoord(x, y-1) && visited[x, y-1] != 1 && this.board[x, y-1] == group.getPlayer())
+                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && this.board[x, y - 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y - 1));
-                    visited[x, y - 1] = 1; 
+                    visited[x, y - 1] = 1;
                 }
             }
 
-            group.setLiberties(liberties.Count);
+            group.calcLiberties(this);
 
             return group;
         }
 
-        private bool validCoord(int row, int col)
+        public void updateRegions()
+        {
+            // reset regions
+            this.regions = new List<Region>();
+
+            // loop through every position
+            for (int row = 0; row < this.size; row++)
+            {
+                for (int col = 0; col < this.size; col++)
+                {
+                    // check if there's a stone here (if there is, continue)
+                    if (this.board[row, col] != 0)
+                    {
+                        continue;
+                    }
+
+                    // check if the intersection is already in a region
+                    bool inRegion = false;
+                    foreach (Region region in this.regions)
+                    {
+                        if (region.inRegion(row, col))
+                        {
+                            inRegion = true;
+                            break;
+                        }
+                    }
+                    if (inRegion) { continue; }
+
+                    // create a new region from current location
+                    Region r = new Region();
+
+                    r = traverseRegion(row, col, r);
+                    this.regions.Add(r);
+                }
+            }
+        }
+
+        // same algorithm as `traverseGroup` with minor tweaks
+        private Region traverseRegion(int row, int col, Region region)
+        {
+            int[,] visited = new int[this.size, this.size];
+
+            List<Vector> queue = new List<Vector>();
+
+            queue.Add(new Vector(row, col));
+            visited[row, col] = 1;
+
+            while (queue.Count > 0)
+            {
+                Vector p = queue[0];
+                int x = (int)p.X;
+                int y = (int)p.Y;
+                queue.RemoveAt(0);
+
+                region.addPoint(x, y);
+
+                // find surrounding groups
+                if (validCoord(x + 1, y) && !region.pointSurrounds(x + 1, y) && board[x + 1, y] != 0) { region.addGroup(this.groupAt(x + 1, y)); this.groupAt(x + 1, y).addRegion(region); }
+                if (validCoord(x - 1, y) && !region.pointSurrounds(x - 1, y) && board[x - 1, y] != 0) { region.addGroup(this.groupAt(x - 1, y)); this.groupAt(x - 1, y).addRegion(region); }
+                if (validCoord(x, y + 1) && !region.pointSurrounds(x, y + 1) && board[x, y + 1] != 0) { region.addGroup(this.groupAt(x, y + 1)); this.groupAt(x, y + 1).addRegion(region); }
+                if (validCoord(x, y - 1) && !region.pointSurrounds(x, y - 1) && board[x, y - 1] != 0) { region.addGroup(this.groupAt(x, y - 1)); this.groupAt(x, y - 1).addRegion(region); }
+
+                // check north
+                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && this.board[x + 1, y] == 0)
+                {
+                    queue.Add(new Vector(x + 1, y));
+                    visited[x + 1, y] = 1;
+                }
+
+                // check south
+                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && this.board[x - 1, y] == 0)
+                {
+                    queue.Add(new Vector(x - 1, y));
+                    visited[x - 1, y] = 1;
+                }
+
+                // check east
+                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && this.board[x, y + 1] == 0)
+                {
+                    queue.Add(new Vector(x, y + 1));
+                    visited[x, y + 1] = 1;
+                }
+
+                // check west
+                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && this.board[x, y - 1] == 0)
+                {
+                    queue.Add(new Vector(x, y - 1));
+                    visited[x, y - 1] = 1;
+                }
+            }
+
+            return region;
+        }
+
+        public void calculateChains()
+        {
+            this.chains = new List<Chain>();
+
+            foreach (Group g in this.groups)
+            {
+                foreach (Group G in this.groups)
+                {
+                    if (g == G) { continue; }
+                    if (g.getPlayer() != G.getPlayer()) { continue; }
+
+                    List<Vector> sharedLiberties = (List<Vector>)g.getLiberties().Intersect(G.getLiberties()).ToList();
+
+                    if (sharedLiberties.Count >= 2)
+                    {
+                        this.addToChain(g, G, sharedLiberties);
+                    }
+                    else
+                    {
+                        if (sharedLiberties.Count == 1)
+                        {
+                            int x = (int)sharedLiberties[0].X;
+                            int y = (int)sharedLiberties[0].Y;
+
+                            List<Vector> pointLiberties = new List<Vector>();
+
+                            if (this.validCoord(x + 1, y) && !pointLiberties.Contains(new Vector(x + 1, y)) && this.board[x + 1, y] == 0) { pointLiberties.Add(new Vector(x + 1, y)); }
+                            if (this.validCoord(x - 1, y) && !pointLiberties.Contains(new Vector(x - 1, y)) && this.board[x - 1, y] == 0) { pointLiberties.Add(new Vector(x - 1, y)); }
+                            if (this.validCoord(x, y + 1) && !pointLiberties.Contains(new Vector(x, y + 1)) && this.board[x, y + 1] == 0) { pointLiberties.Add(new Vector(x, y + 1)); }
+                            if (this.validCoord(x, y - 1) && !pointLiberties.Contains(new Vector(x, y - 1)) && this.board[x, y - 1] == 0) { pointLiberties.Add(new Vector(x, y - 1)); }
+
+                            if (pointLiberties.Count <= 1)
+                            {
+                                this.addToChain(g, G, sharedLiberties);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void addToChain(Group g, Group G, List<Vector> sharedLiberties)
+        {
+
+            bool inChain = false;
+            foreach (Chain chain in this.chains)
+            {
+                if (chain.inChain(g) || chain.inChain(G))
+                {
+                    inChain = true;
+                    chain.addGroup(G);
+                    chain.addGroup(g);
+                    chain.addPoints(sharedLiberties);
+
+                    G.setChain(chain);
+                    g.setChain(chain);
+                    break;
+                }
+            }
+            if (!inChain)
+            {
+                Chain c = new Chain(new List<Group> { g, G }, sharedLiberties);
+                this.chains.Add(c);
+                G.setChain(c);
+                g.setChain(c);
+            }
+        }
+
+        private Group groupAt(int row, int col)
+        {
+            foreach (Group group in this.groups)
+            {
+                if (group.inGroup(row, col))
+                {
+                    return group;
+                }
+            }
+            throw new InvalidOperationException("invalid point");
+        }
+
+        public bool validCoord(int row, int col)
         {
             if (row < 0 || col < 0) return false;
             if (row >= this.size || col >= this.size) return false;
             return true;
+        }
+
+        private void removeDead()
+        {
+            for (int i = 0; i < this.groups.Count; i++)
+            {
+                if (!(bool)this.groups[i].getSafety(this))
+                {
+                    Console.WriteLine("Found dead group with stone at: " + this.groups[i].getStones()[0].ToString());
+                    foreach (Vector p in this.groups[i].getStones())
+                    {
+                        this.board[(int)p.X, (int)p.Y] = 0;
+                        if (this.groups[i].getPlayer() == 2)
+                        {
+                            this.blackPrisoners.Add(p);
+                        }
+                        else
+                        {
+                            this.whitePrisoners.Add(p);
+                        }
+                    }
+                    this.groups.RemoveAt(i);
+                }
+            }
+        }
+
+        public float calculateScore(float komi)
+        {
+            this.updateGroups();
+            this.updateRegions();
+            this.calculateChains();
+            foreach (Group group in this.groups)
+            {
+                group.getSafety(this, true);
+            }
+
+            this.removeDead();
+            this.updateGroups();
+            this.updateRegions();
+
+            float score = 0;
+
+            foreach (Region r in this.regions)
+            {
+                if (r.getPlayer() == 1)
+                {
+                    score += r.getPoints().Count;
+                }
+                else if (r.getPlayer() == 2)
+                {
+                    score -= r.getPoints().Count;
+                }
+            }
+            score += blackPrisoners.Count;
+            score -= whitePrisoners.Count;
+
+            score -= komi;
+
+            return score;
         }
 
         // returns true if capture is valid, false otherwise
@@ -210,23 +494,31 @@ namespace GoGame
         {
             int[,] tempBoard = (int[,])this.board.Clone();
             bool enemyCapture = false;
-            for (int i=0; i<this.groups.Count; i++)
+            for (int i = 0; i < this.groups.Count; i++)
             {
-                if (this.groups[i].getLiberties() == 0 && this.groups[i].getPlayer() != this.player)
+                if (this.groups[i].getLiberties().Count == 0 && this.groups[i].getPlayer() != this.player)
                 {
                     enemyCapture = true;
                     // remove all stones in the group
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         tempBoard[(int)p.X, (int)p.Y] = 0;
+                        if (this.player == 1)
+                        {
+                            this.blackPrisoners.Add(p);
+                        }
+                        else
+                        {
+                            this.whitePrisoners.Add(p);
+                        }
                     }
-                    groups.RemoveAt(i);
-                } 
+                    this.groups.RemoveAt(i);
+                }
             }
 
-            foreach(Group g in this.groups)
+            foreach (Group g in this.groups)
             {
-                if (g.getPlayer() == this.player && !enemyCapture && g.getLiberties() == 0)
+                if (g.getPlayer() == this.player && !enemyCapture && g.getLiberties().Count == 0)
                 {
                     // self capture, without capturing an enemy group
                     return false;
@@ -246,7 +538,7 @@ namespace GoGame
         // for some unknown reason, .Contains didn't work so had to implement it myself :(
         private bool listInList(int[,] board, List<int[,]> list)
         {
-            for (int i=0; i<list.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (listEqual(list[i], board))
                 {
@@ -258,45 +550,17 @@ namespace GoGame
 
         private bool listEqual(int[,] board1, int[,] board2)
         {
-            for (int row=0; row<this.size; row++)
+            for (int row = 0; row < this.size; row++)
             {
-                for (int col=0; col<this.size; col++)
+                for (int col = 0; col < this.size; col++)
                 {
-                    if (board1[row,col] != board2[row,col])
+                    if (board1[row, col] != board2[row, col])
                     {
                         return false;
                     }
                 }
             }
             return true;
-        }
-
-        public void printBoard()
-        {
-            for (int row=0; row<this.size; row++)
-            {
-                for (int col=0; col<this.size; col++)
-                {
-                    Console.Write(this.board[row, col].ToString() + " ");
-                }
-
-                for (LinkedListNode<int[,]> node = this.prevBoards.First; node != null; node = node.Next)
-                {
-                    Console.Write("\t");
-                    for (int col=0; col<this.size; col++)
-                    {
-                        Console.Write(node.Value[row,col].ToString() + " ");
-                    }
-                }
-
-                Console.Write("\n");
-            }
-
-            Console.Write("\n\n");
-            foreach (Group group in this.groups)
-            {
-                group.printGroup();
-            }
         }
     }
 }
