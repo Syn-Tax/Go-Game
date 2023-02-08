@@ -14,38 +14,42 @@ namespace GoGame
     internal class boardButton
     {
         // We may need other board details in order to handle the placement of stones.
-        Board board;
-        GameBoard gameBoard;
+        private Board board;
+        private GameBoard gameBoard;
+        private Button[,] boardBtns;
+
+        private Color boardColor = Color.FromArgb(219, 176, 107);
+        private Color blackStone = Color.FromArgb(0, 0, 0);
+        private Color whiteStone = Color.FromArgb(255, 255, 255);
 
         public boardButton(Board board, GameBoard gameboard)
         {
             this.board = board;
             this.gameBoard = gameboard;
+            this.boardBtns = new Button[this.board.getSize(), this.board.getSize()];
         }
 
         // createButtons is used for the construction and mangement of buttons
         public void createButtons()
         {
-            // Creating 2D array of buttons
-            Button[,] boardBtns = new Button[this.board.getSize(), this.board.getSize()];
             // Loop using the board 2D array. i.e this.board 
             for (int row = 0; row < this.board.getSize(); row++)
             {
                 for (int col = 0; col < this.board.getSize(); col++)
                 {
                     // Placing the buttons onto the form
-                    boardBtns[row, col] = new Button();
+                    this.boardBtns[row, col] = new Button();
                     // Have transparancy.
-                    makeTransparentBtn(boardBtns[row, col]);
+                    makeTransparentBtn(this.boardBtns[row, col]);
                     // Have them scale and resize correctly
-                    boardBtns[row, col].SetBounds(33 * col + 250, 33 * row + 70, 15, 15);
+                    this.boardBtns[row, col].SetBounds(33 * col + 250, 33 * row + 70, 15, 15);
 
                     // create event handler for button
-                    boardBtns[row, col].Click += new EventHandler(this.btnEvent_Click);
-                    boardBtns[row, col].Tag = row.ToString() + " " + col.ToString();
+                    this.boardBtns[row, col].Click += new EventHandler(this.btnEvent_Click);
+                    this.boardBtns[row, col].Tag = row.ToString() + " " + col.ToString();
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
-                    this.gameBoard.addButton(boardBtns[row, col]);
+                    this.gameBoard.addButton(this.boardBtns[row, col]);
                 }
             }
         }
@@ -56,15 +60,29 @@ namespace GoGame
             btn.TabStop = false; // This means that the user can't select buttons by pressing tab
             btn.FlatStyle = FlatStyle.Flat; // removing 3D effects from the button with flat styling
             btn.FlatAppearance.BorderSize = 0; // removing border
-            btn.BackColor = Color.FromArgb(219, 176, 107); // Making the button transparent with the form.
+            btn.BackColor = this.boardColor; // Making the button transparent with the form.
             return btn;
         }
 
         // Place stone is used to handle the stone being represented on the form and in the this.board 2D array.
-        public void placeStone()
+        public void renderStones()
         {
-            // Place coloured image into button, depending on whos turn it is.
-            // Update the 2D array.
+            for (int row = 0; row < this.board.getSize(); row ++)
+            {
+                for (int col = 0; col < this.board.getSize(); col++)
+                {
+                    if (this.board.getBoard()[row, col] == 0)
+                    {
+                        this.boardBtns[row, col].BackColor = this.boardColor;
+                    } else if (this.board.getBoard()[row, col] == 1)
+                    {
+                        this.boardBtns[row, col].BackColor = this.blackStone;
+                    } else if (this.board.getBoard()[row, col] == 2)
+                    {
+                        this.boardBtns[row, col].BackColor = this.whiteStone;
+                    }
+                }
+            }
         }
 
         // on click event handler, mainly used for placeStone()
@@ -82,6 +100,7 @@ namespace GoGame
                 DialogResult illegalMove;
                 illegalMove = MessageBox.Show("Last move was Illegal!!!", "Illegal Move!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            renderStones();
         }
     }
 }
