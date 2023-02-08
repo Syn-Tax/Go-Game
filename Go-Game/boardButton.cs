@@ -20,6 +20,7 @@ namespace GoGame
 
         private Button passBtn;
         private Button resignBtn;
+        private Label playerText;
 
         private Color boardColor = Color.FromArgb(219, 176, 107);
         private Color blackStone = Color.FromArgb(0, 0, 0);
@@ -52,7 +53,7 @@ namespace GoGame
                     this.boardBtns[row, col].Tag = row.ToString() + " " + col.ToString();
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
-                    this.gameBoard.addButton(this.boardBtns[row, col]);
+                    this.gameBoard.addObject(this.boardBtns[row, col]);
                 }
             }
 
@@ -61,13 +62,19 @@ namespace GoGame
             this.passBtn.SetBounds(650, 100, 100, 50);
             this.passBtn.Text = "Pass";
             this.passBtn.Click += new EventHandler(this.passBtn_Click);
-            this.gameBoard.addButton(this.passBtn);
+            this.gameBoard.addObject(this.passBtn);
 
             this.resignBtn = new Button();
             this.resignBtn.SetBounds(650, 200, 100, 50);
             this.resignBtn.Text = "Resign";
             this.resignBtn.Click += new EventHandler(this.resignBtn_Click);
-            this.gameBoard.addButton(this.resignBtn);
+            this.gameBoard.addObject(this.resignBtn);
+
+            // create player text box
+            this.playerText = new Label();
+            this.playerText.SetBounds(650, 50, 100, 50);
+            this.playerText.Text = "Black to Play";
+            this.gameBoard.addObject(this.playerText);
         }
 
         // Makes buttons transparaent.
@@ -98,6 +105,14 @@ namespace GoGame
                         this.boardBtns[row, col].BackColor = this.whiteStone;
                     }
                 }
+            }
+
+            if (this.board.getPlayer() == 1)
+            {
+                this.playerText.Text = "Black to Play";
+            } else
+            {
+                this.playerText.Text = "White to Play";
             }
         }
 

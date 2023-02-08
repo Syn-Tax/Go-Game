@@ -26,10 +26,10 @@ namespace GoGame
             this.board = new Board(9, 5.5f);
         }
 
-        // Creating function to add board buttons to the form
-        public void addButton(Button btn)
+        // Creating function to add objects to the form
+        public void addObject(object btn)
         {
-            gameBoardPanel.Controls.Add(btn);
+            gameBoardPanel.Controls.Add(btn as Control);
 
         }
 
