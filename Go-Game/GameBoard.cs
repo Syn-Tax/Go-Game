@@ -33,6 +33,11 @@ namespace GoGame
 
         }
 
+        public void finishGame(int player, float score, bool resign=false)
+        {
+            Console.WriteLine(player.ToString() + " Won!!!");
+        }
+
         private void placeBtns()
         {
             // Defining an instance of board buttons, so that buttons can be added to the form.
