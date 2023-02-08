@@ -104,6 +104,7 @@ namespace GoGame
         // returns true if move was legally made, false if move was illegal and could not be played
         public bool move(int row, int col, GameBoard gb)
         {
+            Console.WriteLine("Move at: " + row.ToString() + "," + col.ToString());
             // check for pass
             if (row == -1 || col == -1)
             {

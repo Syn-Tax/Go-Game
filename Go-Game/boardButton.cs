@@ -13,35 +13,39 @@ namespace GoGame
 {
     internal class boardButton
     {
-        // Need to get/inherit size of the board for Board.cs
-        public int size;
         // We may need other board details in order to handle the placement of stones.
+        Board board;
+        GameBoard gameBoard;
 
-        public boardButton()
+        public boardButton(Board board, GameBoard gameboard)
         {
-            // This should be updated if the board size changes
-            this.size = 9;
+            this.board = board;
+            this.gameBoard = gameboard;
         }
 
         // createButtons is used for the construction and mangement of buttons
-        public void createButtons(GameBoard gb)
+        public void createButtons()
         {
             // Creating 2D array of buttons
-            Button[,] boardBtns = new Button[this.size, this.size];
+            Button[,] boardBtns = new Button[this.board.getSize(), this.board.getSize()];
             // Loop using the board 2D array. i.e this.board 
-            for (int x = 0; x < this.size; x++)
+            for (int row = 0; row < this.board.getSize(); row++)
             {
-                for (int y = 0; y < this.size; y++)
+                for (int col = 0; col < this.board.getSize(); col++)
                 {
                     // Placing the buttons onto the form
-                    boardBtns[x, y] = new Button();
+                    boardBtns[row, col] = new Button();
                     // Have transparancy.
-                    makeTransparentBtn(boardBtns[x, y]);
+                    makeTransparentBtn(boardBtns[row, col]);
                     // Have them scale and resize correctly
-                    boardBtns[x, y].SetBounds(33 * x + 250, 33 * y + 70, 15, 15);
+                    boardBtns[row, col].SetBounds(33 * col + 250, 33 * row + 70, 15, 15);
+
+                    // create event handler for button
+                    boardBtns[row, col].Click += new EventHandler(this.btnEvent_Click);
+                    boardBtns[row, col].Tag = row.ToString() + " " + col.ToString();
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
-                    gb.addButton(boardBtns[x, y]);
+                    this.gameBoard.addButton(boardBtns[row, col]);
                 }
             }
         }
@@ -66,7 +70,18 @@ namespace GoGame
         // on click event handler, mainly used for placeStone()
         void btnEvent_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Button has been clicked");
+            Button btn = sender as Button;
+            int row = Int32.Parse(btn.Tag.ToString().Split()[0]);
+            int col = Int32.Parse(btn.Tag.ToString().Split()[1]);
+            //Console.WriteLine("Button " + row.ToString() + "," + col.ToString() + " was pressed");
+            bool isLegal = this.board.move(row, col, this.gameBoard);
+            if (!isLegal)
+            {
+
+                // Creating a message box indicate illegal move
+                DialogResult illegalMove;
+                illegalMove = MessageBox.Show("Last move was Illegal!!!", "Illegal Move!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }
