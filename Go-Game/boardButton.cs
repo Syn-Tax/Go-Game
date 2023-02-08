@@ -38,7 +38,7 @@ namespace GoGame
                     // Have transparancy.
                     makeTransparentBtn(boardBtns[x, y]);
                     // Have them scale and resize correctly
-                    boardBtns[x, y].SetBounds(45 * x, 45 * y, 45, 45);
+                    boardBtns[x, y].SetBounds(33 * x + 250, 33 * y + 70, 15, 15);
                     // Place buttons on the board.
                     // System.Windows.Form.Button(boardBtns[x, y]);
                     gb.addButton(boardBtns[x, y]);
@@ -52,8 +52,7 @@ namespace GoGame
             btn.TabStop = false; // This means that the user can't select buttons by pressing tab
             btn.FlatStyle = FlatStyle.Flat; // removing 3D effects from the button with flat styling
             btn.FlatAppearance.BorderSize = 0; // removing border
-            btn.Text = "xd"; // Giving buttons text for testing purposes.
-            btn.BackColor = Color.Transparent; // Making the button transparent with the form.
+            btn.BackColor = Color.FromArgb(219, 176, 107); // Making the button transparent with the form.
             return btn;
         }
 
