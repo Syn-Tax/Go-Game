@@ -16,7 +16,6 @@ namespace GoGame
         private List<Region> healthyRegions;
         private List<Region> contactingRegions;
         private Chain chain;
-        public int slc;
 
         public Group(int player) 
         { 
@@ -90,23 +89,6 @@ namespace GoGame
             return this.liberties;
         }
 
-        
-
-        public void printGroup(Board board)
-        {
-            Console.WriteLine(this.stones.Count().ToString() + " " + this.player.ToString() + " " + this.slc.ToString() + " " + this.getSafety(board).ToString());
-            foreach (Vector stone in this.stones)
-            {
-                Console.Write(stone.ToString() + " ");
-            }
-            Console.Write("\n");
-            foreach (Vector liberty in this.liberties)
-            {
-                Console.Write(liberty.ToString() + " ");
-            }
-            Console.Write("\n\n");
-        }
-
         public bool getSafety(Board board, bool recalculate=false)
         {
             if (this.isSafe.HasValue && !recalculate)
@@ -129,7 +111,6 @@ namespace GoGame
             {
                 totalSLC = this.chain.sureLibertyCount(board);
             }
-            this.slc = totalSLC;
 
             if (totalSLC >= 2)
             {

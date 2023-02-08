@@ -36,23 +36,23 @@ namespace GoGame
         private bool lastMovePass;
         private float komi;
 
-        public Board(int size, float komi) 
+        public Board(int size, float komi)
         {
             // initialise size
             this.size = size;
 
             // initialise board
-            this.board = new int[this.size,this.size];
-            for (int i=0; i<this.size; i++)
+            this.board = new int[this.size, this.size];
+            for (int i = 0; i < this.size; i++)
             {
-                for (int j=0; j<this.size; j++)
+                for (int j = 0; j < this.size; j++)
                 {
-                    this.board[i,j] = 0;
+                    this.board[i, j] = 0;
                 }
             }
 
             // initialise prevBoards variable
-           this. prevBoards = new LinkedList<int[,]>();
+            this.prevBoards = new LinkedList<int[,]>();
 
             // initialise first player (to black)
             this.player = 1;
@@ -110,7 +110,8 @@ namespace GoGame
                     Console.WriteLine(string.Join(" ", this.blackPrisoners));
                     Console.WriteLine(string.Join(" ", this.whitePrisoners));
 
-                } else
+                }
+                else
                 {
                     this.lastMovePass = true;
                 }
@@ -119,13 +120,13 @@ namespace GoGame
             }
 
             // check if already a stone there
-            if (this.board[row,col] != 0)
+            if (this.board[row, col] != 0)
             {
                 return false; // already a stone at board pos x,y
             }
-            
+
             // make move
-            this.board[row,col] = this.player;
+            this.board[row, col] = this.player;
 
 
             // update groups & calculate captures
@@ -161,9 +162,9 @@ namespace GoGame
             this.groups = new List<Group>();
 
             // loop through every position
-            for (int row=0; row<this.size; row++)
+            for (int row = 0; row < this.size; row++)
             {
-                for (int col=0; col<this.size; col++)
+                for (int col = 0; col < this.size; col++)
                 {
                     // check if there's a stone here
                     if (this.board[row, col] == 0)
@@ -215,31 +216,31 @@ namespace GoGame
 
 
                 // check north
-                if (validCoord(x+1, y) && visited[x+1, y] != 1 && this.board[x +1, y] == group.getPlayer())
+                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && this.board[x + 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x + 1, y));
-                    visited[x + 1, y] = 1; 
+                    visited[x + 1, y] = 1;
                 }
 
                 // check south
-                if (validCoord(x-1, y) && visited[x-1, y] != 1 && this.board[x-1, y] == group.getPlayer())
+                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && this.board[x - 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x - 1, y));
-                    visited[x - 1, y] = 1; 
+                    visited[x - 1, y] = 1;
                 }
 
                 // check east
-                if (validCoord(x, y+1) && visited[x, y+1] != 1 && this.board[x, y+1] == group.getPlayer())
+                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && this.board[x, y + 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y + 1));
-                    visited[x, y + 1] = 1; 
+                    visited[x, y + 1] = 1;
                 }
 
                 // check west
-                if (validCoord(x, y-1) && visited[x, y-1] != 1 && this.board[x, y-1] == group.getPlayer())
+                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && this.board[x, y - 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y - 1));
-                    visited[x, y - 1] = 1; 
+                    visited[x, y - 1] = 1;
                 }
             }
 
@@ -303,39 +304,39 @@ namespace GoGame
                 queue.RemoveAt(0);
 
                 region.addPoint(x, y);
-                
+
                 // find surrounding groups
-                if (validCoord(x+1,y) && !region.pointSurrounds(x+1,y) && board[x+1,y] != 0) { region.addGroup(this.groupAt(x + 1, y)); this.groupAt(x + 1, y).addRegion(region); }
-                if (validCoord(x-1,y) && !region.pointSurrounds(x-1,y) && board[x-1,y] != 0) { region.addGroup(this.groupAt(x - 1, y)); this.groupAt(x - 1, y).addRegion(region); }
-                if (validCoord(x,y+1) && !region.pointSurrounds(x,y+1) && board[x,y+1] != 0) { region.addGroup(this.groupAt(x, y + 1)); this.groupAt(x, y + 1).addRegion(region); }
-                if (validCoord(x,y-1) && !region.pointSurrounds(x,y-1) && board[x,y-1] != 0) { region.addGroup(this.groupAt(x, y - 1)); this.groupAt(x, y - 1).addRegion(region); }
+                if (validCoord(x + 1, y) && !region.pointSurrounds(x + 1, y) && board[x + 1, y] != 0) { region.addGroup(this.groupAt(x + 1, y)); this.groupAt(x + 1, y).addRegion(region); }
+                if (validCoord(x - 1, y) && !region.pointSurrounds(x - 1, y) && board[x - 1, y] != 0) { region.addGroup(this.groupAt(x - 1, y)); this.groupAt(x - 1, y).addRegion(region); }
+                if (validCoord(x, y + 1) && !region.pointSurrounds(x, y + 1) && board[x, y + 1] != 0) { region.addGroup(this.groupAt(x, y + 1)); this.groupAt(x, y + 1).addRegion(region); }
+                if (validCoord(x, y - 1) && !region.pointSurrounds(x, y - 1) && board[x, y - 1] != 0) { region.addGroup(this.groupAt(x, y - 1)); this.groupAt(x, y - 1).addRegion(region); }
 
                 // check north
-                if (validCoord(x+1, y) && visited[x+1, y] != 1 && this.board[x +1, y] == 0)
+                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && this.board[x + 1, y] == 0)
                 {
                     queue.Add(new Vector(x + 1, y));
-                    visited[x + 1, y] = 1; 
+                    visited[x + 1, y] = 1;
                 }
 
                 // check south
-                if (validCoord(x-1, y) && visited[x-1, y] != 1 && this.board[x-1, y] == 0)
+                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && this.board[x - 1, y] == 0)
                 {
                     queue.Add(new Vector(x - 1, y));
-                    visited[x - 1, y] = 1; 
+                    visited[x - 1, y] = 1;
                 }
 
                 // check east
-                if (validCoord(x, y+1) && visited[x, y+1] != 1 && this.board[x, y+1] == 0)
+                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && this.board[x, y + 1] == 0)
                 {
                     queue.Add(new Vector(x, y + 1));
-                    visited[x, y + 1] = 1; 
+                    visited[x, y + 1] = 1;
                 }
 
                 // check west
-                if (validCoord(x, y-1) && visited[x, y-1] != 1 && this.board[x, y-1] == 0)
+                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && this.board[x, y - 1] == 0)
                 {
                     queue.Add(new Vector(x, y - 1));
-                    visited[x, y - 1] = 1; 
+                    visited[x, y - 1] = 1;
                 }
             }
 
@@ -358,7 +359,8 @@ namespace GoGame
                     if (sharedLiberties.Count >= 2)
                     {
                         this.addToChain(g, G, sharedLiberties);
-                    } else
+                    }
+                    else
                     {
                         if (sharedLiberties.Count == 1)
                         {
@@ -430,17 +432,19 @@ namespace GoGame
 
         private void removeDead()
         {
-            for (int i=0; i<this.groups.Count; i++)
+            for (int i = 0; i < this.groups.Count; i++)
             {
-                if (!this.groups[i].getSafety(this, false))
+                if (!(bool)this.groups[i].getSafety(this))
                 {
+                    Console.WriteLine("Found dead group with stone at: " + this.groups[i].getStones()[0].ToString());
                     foreach (Vector p in this.groups[i].getStones())
                     {
                         this.board[(int)p.X, (int)p.Y] = 0;
                         if (this.groups[i].getPlayer() == 2)
                         {
                             this.blackPrisoners.Add(p);
-                        } else
+                        }
+                        else
                         {
                             this.whitePrisoners.Add(p);
                         }
@@ -464,8 +468,6 @@ namespace GoGame
             this.updateGroups();
             this.updateRegions();
 
-            this.printBoard();
-
             float score = 0;
 
             foreach (Region r in this.regions)
@@ -473,7 +475,8 @@ namespace GoGame
                 if (r.getPlayer() == 1)
                 {
                     score += r.getPoints().Count;
-                } else if (r.getPlayer() == 2)
+                }
+                else if (r.getPlayer() == 2)
                 {
                     score -= r.getPoints().Count;
                 }
@@ -491,7 +494,7 @@ namespace GoGame
         {
             int[,] tempBoard = (int[,])this.board.Clone();
             bool enemyCapture = false;
-            for (int i=0; i<this.groups.Count; i++)
+            for (int i = 0; i < this.groups.Count; i++)
             {
                 if (this.groups[i].getLiberties().Count == 0 && this.groups[i].getPlayer() != this.player)
                 {
@@ -503,16 +506,17 @@ namespace GoGame
                         if (this.player == 1)
                         {
                             this.blackPrisoners.Add(p);
-                        } else
+                        }
+                        else
                         {
                             this.whitePrisoners.Add(p);
                         }
                     }
                     this.groups.RemoveAt(i);
-                } 
+                }
             }
 
-            foreach(Group g in this.groups)
+            foreach (Group g in this.groups)
             {
                 if (g.getPlayer() == this.player && !enemyCapture && g.getLiberties().Count == 0)
                 {
@@ -534,7 +538,7 @@ namespace GoGame
         // for some unknown reason, .Contains didn't work so had to implement it myself :(
         private bool listInList(int[,] board, List<int[,]> list)
         {
-            for (int i=0; i<list.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (listEqual(list[i], board))
                 {
@@ -546,64 +550,17 @@ namespace GoGame
 
         private bool listEqual(int[,] board1, int[,] board2)
         {
-            for (int row=0; row<this.size; row++)
+            for (int row = 0; row < this.size; row++)
             {
-                for (int col=0; col<this.size; col++)
+                for (int col = 0; col < this.size; col++)
                 {
-                    if (board1[row,col] != board2[row,col])
+                    if (board1[row, col] != board2[row, col])
                     {
                         return false;
                     }
                 }
             }
             return true;
-        }
-
-        public void printBoard()
-        {
-            for (int row=0; row<this.size; row++)
-            {
-                for (int col=0; col<this.size; col++)
-                {
-                    Console.Write(this.board[row, col].ToString() + " ");
-                }
-
-                for (LinkedListNode<int[,]> node = this.prevBoards.First; node != null; node = node.Next)
-                {
-                    Console.Write("\t");
-                    for (int col=0; col<this.size; col++)
-                    {
-                        Console.Write(node.Value[row,col].ToString() + " ");
-                    }
-                }
-
-                Console.Write("\n");
-            }
-
-            Console.Write("\n\n");
-            Console.WriteLine("GROUPS\n");
-            foreach (Group group in this.groups)
-            {
-                //group.calculateHealthy(this);
-                group.printGroup(this);
-            }
-            Console.Write("\n\n");
-            Console.WriteLine("REGIONS\n");
-            foreach (Region region in this.regions)
-            {
-                region.printRegion();
-            }
-
-            Console.Write("\n\n");
-            Console.WriteLine("CHAINS");
-            foreach (Chain chain in this.chains)
-            {
-                foreach(Group group in chain.getGroups())
-                {
-                    group.printGroup(this);
-                }
-                Console.Write("\n\n");
-            }
         }
     }
 }
