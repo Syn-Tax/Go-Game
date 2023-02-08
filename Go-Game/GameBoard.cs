@@ -8,14 +8,22 @@ namespace GoGame
     {
         private PictureBox gridPictureBox;
 
+        private Board board;
+
         public GameBoard()
         {
             InitializeComponent();
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            initialiseBoard();
             placeBtns();
             createGrid();
+        }
+
+        private void initialiseBoard()
+        {
+            this.board = new Board(9, 5.5f);
         }
 
         // Creating function to add board buttons to the form
@@ -28,8 +36,8 @@ namespace GoGame
         private void placeBtns()
         {
             // Defining an instance of board buttons, so that buttons can be added to the form.
-            boardButton b1 = new boardButton();
-            b1.createButtons(this);
+            boardButton b1 = new boardButton(this.board, this);
+            b1.createButtons();
         }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked
