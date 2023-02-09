@@ -42,6 +42,7 @@ namespace GoGame
             this.quitButton = new System.Windows.Forms.Button();
             this.optionsButton = new System.Windows.Forms.Button();
             this.playButton = new System.Windows.Forms.Button();
+            this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.mainMenuPanel.SuspendLayout();
             this.gameBoardPanel.SuspendLayout();
@@ -52,7 +53,8 @@ namespace GoGame
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.rulesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -90,8 +92,8 @@ namespace GoGame
             this.gameBoardPanel.TabIndex = 3;
             // 
             // gameBoardBackButton
-            //
-            this.gameBoardBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            // 
+            this.gameBoardBackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameBoardBackButton.Location = new System.Drawing.Point(22, 22);
             this.gameBoardBackButton.Name = "gameBoardBackButton";
             this.gameBoardBackButton.Size = new System.Drawing.Size(99, 51);
@@ -112,7 +114,7 @@ namespace GoGame
             // 
             // optionsBackButton
             // 
-            this.optionsBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsBackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsBackButton.Location = new System.Drawing.Point(22, 22);
             this.optionsBackButton.Name = "optionsBackButton";
             this.optionsBackButton.Size = new System.Drawing.Size(99, 51);
@@ -133,7 +135,7 @@ namespace GoGame
             // 
             // quitButton
             // 
-            this.quitButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.quitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quitButton.Location = new System.Drawing.Point(250, 296);
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(279, 80);
@@ -144,7 +146,7 @@ namespace GoGame
             // 
             // optionsButton
             // 
-            this.optionsButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsButton.Location = new System.Drawing.Point(250, 172);
             this.optionsButton.Name = "optionsButton";
             this.optionsButton.Size = new System.Drawing.Size(279, 80);
@@ -155,7 +157,7 @@ namespace GoGame
             // 
             // playButton
             // 
-            this.playButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playButton.Location = new System.Drawing.Point(250, 45);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(279, 80);
@@ -163,6 +165,13 @@ namespace GoGame
             this.playButton.Text = "Play";
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            // 
+            // rulesToolStripMenuItem
+            // 
+            this.rulesToolStripMenuItem.Name = "rulesToolStripMenuItem";
+            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.rulesToolStripMenuItem.Text = "Rules";
+            this.rulesToolStripMenuItem.Click += new System.EventHandler(this.rulesToolStripMenuItem_Click);
             // 
             // GameBoard
             // 
@@ -200,6 +209,7 @@ namespace GoGame
         private System.Windows.Forms.Panel optionMenuPanel;
         private System.Windows.Forms.Button optionsBackButton;
         private System.Windows.Forms.Label nothingToSeeHere;
+        private ToolStripMenuItem rulesToolStripMenuItem;
     }
 }
 

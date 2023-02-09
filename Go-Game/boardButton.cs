@@ -144,9 +144,12 @@ namespace GoGame
             {
                 illegalMove();
             }
+            else
+            {
+                clickSound();
+            }
             renderStones();
             // Playing a sound effect on click.
-            clickSound();
         }
 
         private void passBtn_Click(object sender, EventArgs e)
