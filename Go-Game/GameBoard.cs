@@ -10,6 +10,8 @@ namespace GoGame
 
         private Board board;
 
+        private boardButton b1;
+
         public GameBoard()
         {
             InitializeComponent();
@@ -28,8 +30,10 @@ namespace GoGame
         private void initialiseBoard()
         {
             this.board = new Board(9, 5.5f);
-            placeBtns();
+            b1 = new boardButton(this.board, this);
+            b1.createButtons();
             createGrid();
+            renderGrid();
         }
 
         // Creating function to add objects to the form
@@ -69,12 +73,6 @@ namespace GoGame
             }
         }
 
-        private void placeBtns()
-        {
-            // Defining an instance of board buttons, so that buttons can be added to the form.
-            boardButton b1 = new boardButton(this.board, this);
-            b1.createButtons();
-        }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked
         {
@@ -113,15 +111,20 @@ namespace GoGame
         protected override void OnResize(EventArgs e) // event handler for whenever the form is resized
         {
             base.OnResize(e);
-            renderGrid();
-            adjustButtons();
+            if (mainMenuPanel.Visible)
+            {
+                adjustButtons();
+            }
+            if (gameBoardPanel.Visible)
+            {
+                renderGrid();
+            }
         }
 
         public void createGrid() // The create grid function is responsible for building the board.
         {
             int boardSize = 9; // For now, this is 9, eventually we can give the user options to pick 9x9, 13x13, 19x19
             Array[,] boardArray = new Array[boardSize, boardSize]; // Creating the 2D Array
-            renderGrid(); // Drawing the Go board image to the form.
             // Now we need to link the 2D array to the image
             // Creating buttons
 
@@ -141,6 +144,10 @@ namespace GoGame
 
             // render the image again using the new dimensions of the window
             gridPictureBox = renderImage("../../assets/goBoard.png", (this.Width - (this.Height - 75)) / 2, 20, this.Height - 110, this.Height - 110, "grid");
+            if (b1 != null)
+            {
+                b1.renderStones();
+            }
         }
 
         private void adjustButtons()
