@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\goBoard.png" />
+    <Content Include="assets\stone-dropping.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
