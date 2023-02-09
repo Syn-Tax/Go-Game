@@ -37,6 +37,11 @@ namespace GoGame
             this.boardBtns = new Button[this.board.getSize(), this.board.getSize()];
         }
 
+        public void setBoard(Board board)
+        {
+            this.board = board;
+        }
+
         // createButtons is used for the construction and mangement of buttons
         public void createButtons()
         {
@@ -172,11 +177,13 @@ namespace GoGame
         private void passBtn_Click(object sender, EventArgs e)
         {
             this.board.move(-1, -1, this.gameBoard);
+            renderStones();
         }
 
         private void resignBtn_Click(object sender, EventArgs e)
         {
             this.board.move(-2, -2, this.gameBoard);
+            renderStones();
         }
     }
 }

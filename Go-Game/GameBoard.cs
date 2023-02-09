@@ -10,12 +10,16 @@ namespace GoGame
 
         private Board board;
 
+        private boardButton bb;
+
         public GameBoard()
         {
             InitializeComponent();
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            this.board = new Board(9, 5.5f);
+            this.bb = new boardButton(this.board, this);
         }
 
         private void resetGame()
@@ -23,11 +27,14 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            initialiseBoard();
         }
 
         private void initialiseBoard()
         {
+            gameBoardPanel.Controls.Clear();
             this.board = new Board(9, 5.5f);
+            this.bb.setBoard(this.board);
             placeBtns();
             createGrid();
         }
@@ -72,8 +79,8 @@ namespace GoGame
         private void placeBtns()
         {
             // Defining an instance of board buttons, so that buttons can be added to the form.
-            boardButton b1 = new boardButton(this.board, this);
-            b1.createButtons();
+            this.bb.createButtons();
+            this.bb.renderStones();
         }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked

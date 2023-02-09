@@ -182,6 +182,8 @@ namespace GoGame
             // now the last move was not a pass
             this.lastMovePass = false;
 
+
+
             // return success
             return true;
         }
