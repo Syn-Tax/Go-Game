@@ -23,6 +23,9 @@ namespace GoGame
         private Button resignBtn;
         private Label playerText;
 
+        private Label blackPrisoners;
+        private Label whitePrisoners;
+
         private Color boardColor = Color.FromArgb(219, 176, 107);
         private Color blackStone = Color.FromArgb(0, 0, 0);
         private Color whiteStone = Color.FromArgb(255, 255, 255);
@@ -71,11 +74,22 @@ namespace GoGame
             this.resignBtn.Click += new EventHandler(this.resignBtn_Click);
             this.gameBoard.addObject(this.resignBtn);
 
-            // create player text box
+            // create current player label
             this.playerText = new Label();
             this.playerText.SetBounds(650, 50, 100, 50);
             this.playerText.Text = "Black to Play";
             this.gameBoard.addObject(this.playerText);
+
+            // create prisoner labels
+            this.blackPrisoners = new Label();
+            this.blackPrisoners.SetBounds(650, 275, 100, 25);
+            this.blackPrisoners.Text = "Black Prisoners: 0";
+            this.gameBoard.addObject(this.blackPrisoners);
+
+            this.whitePrisoners = new Label();
+            this.whitePrisoners.SetBounds(650, 300, 100, 25);
+            this.whitePrisoners.Text = "White Prisoners: 0";
+            this.gameBoard.addObject(this.whitePrisoners);
         }
 
         // Makes buttons transparaent.
@@ -115,6 +129,9 @@ namespace GoGame
             {
                 this.playerText.Text = "White to Play";
             }
+
+            this.blackPrisoners.Text = "Black Prisoners: " + this.board.getBlackPrisoners().Count.ToString();
+            this.whitePrisoners.Text = "White Prisoners: " + this.board.getWhitePrisoners().Count.ToString();
         }
 
         private void illegalMove()

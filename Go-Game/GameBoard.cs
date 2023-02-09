@@ -16,14 +16,20 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
-            initialiseBoard();
-            placeBtns();
-            createGrid();
+        }
+
+        private void resetGame()
+        {
+            mainMenuPanel.Visible = true;
+            optionMenuPanel.Visible = false;
+            gameBoardPanel.Visible = false;
         }
 
         private void initialiseBoard()
         {
             this.board = new Board(9, 5.5f);
+            placeBtns();
+            createGrid();
         }
 
         // Creating function to add objects to the form
@@ -35,7 +41,32 @@ namespace GoGame
 
         public void finishGame(int player, float score, bool resign=false)
         {
-            Console.WriteLine(player.ToString() + " Won!!!");
+            string endGame;
+            if (player == 1)
+            {
+                if (resign)
+                {
+                    endGame = "Black Won by Resignation";
+                } else
+                {
+                    endGame = "Black Won by " + score.ToString() + " Points";
+                }
+            } else
+            {
+                if (resign)
+                {
+                    endGame = "White Won by Resignation";
+                } else
+                {
+                    endGame = "White Won by " + score.ToString() + " Points";
+                }
+            }
+
+            DialogResult result = MessageBox.Show(endGame + "\n\nIf this is the correct result, press Yes to end the game, if this is incorrect, press No to continue playing", "Game Over", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                this.resetGame();
+            }
         }
 
         private void placeBtns()
@@ -50,6 +81,7 @@ namespace GoGame
             // bring the gameBoardPanel to the front and make it visible
             gameBoardPanel.BringToFront();
             gameBoardPanel.Visible = true;
+            this.initialiseBoard();
         }
 
         private void optionsButton_Click(object sender, EventArgs e) // handler for when the optionsButton is clicked

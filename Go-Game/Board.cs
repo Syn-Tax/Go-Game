@@ -101,6 +101,16 @@ namespace GoGame
             return this.chains;
         }
 
+        public List<Vector> getBlackPrisoners()
+        {
+            return this.blackPrisoners;
+        }
+
+        public List<Vector> getWhitePrisoners()
+        {
+            return this.whitePrisoners;
+        }
+
         // returns true if move was legally made, false if move was illegal and could not be played
         public bool move(int row, int col, GameBoard gb)
         {
@@ -147,7 +157,7 @@ namespace GoGame
 
 
             // update groups & calculate captures
-            updateGroups();
+            updateGroups(this.board);
             bool validCapture = calcCaptures();
 
             if (!validCapture) { this.board[row, col] = 0; return false; }
@@ -169,11 +179,14 @@ namespace GoGame
             this.player = (this.player % 2) + 1;
             this.numMoves++;
 
+            // now the last move was not a pass
+            this.lastMovePass = false;
+
             // return success
             return true;
         }
 
-        public void updateGroups()
+        public void updateGroups(int[,] board)
         {
             // reset groups
             this.groups = new List<Group>();
@@ -184,7 +197,7 @@ namespace GoGame
                 for (int col = 0; col < this.size; col++)
                 {
                     // check if there's a stone here
-                    if (this.board[row, col] == 0)
+                    if (board[row, col] == 0)
                     {
                         continue;
                     }
@@ -204,7 +217,7 @@ namespace GoGame
                     // create a new group from current location
                     Group g = new Group(this.board[row, col]);
 
-                    g = traverseGroup(row, col, g);
+                    g = traverseGroup(row, col, g, board);
                     this.groups.Add(g);
                 }
             }
@@ -212,7 +225,7 @@ namespace GoGame
 
         // BFS based flood-fill algorithm
         // https://www.wikiwand.com/en/Flood_fill
-        private Group traverseGroup(int row, int col, Group group)
+        private Group traverseGroup(int row, int col, Group group, int[,] board)
         {
             int[,] visited = new int[this.size, this.size];
 
@@ -233,28 +246,28 @@ namespace GoGame
 
 
                 // check north
-                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && this.board[x + 1, y] == group.getPlayer())
+                if (validCoord(x + 1, y) && visited[x + 1, y] != 1 && board[x + 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x + 1, y));
                     visited[x + 1, y] = 1;
                 }
 
                 // check south
-                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && this.board[x - 1, y] == group.getPlayer())
+                if (validCoord(x - 1, y) && visited[x - 1, y] != 1 && board[x - 1, y] == group.getPlayer())
                 {
                     queue.Add(new Vector(x - 1, y));
                     visited[x - 1, y] = 1;
                 }
 
                 // check east
-                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && this.board[x, y + 1] == group.getPlayer())
+                if (validCoord(x, y + 1) && visited[x, y + 1] != 1 && board[x, y + 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y + 1));
                     visited[x, y + 1] = 1;
                 }
 
                 // check west
-                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && this.board[x, y - 1] == group.getPlayer())
+                if (validCoord(x, y - 1) && visited[x, y - 1] != 1 && board[x, y - 1] == group.getPlayer())
                 {
                     queue.Add(new Vector(x, y - 1));
                     visited[x, y - 1] = 1;
@@ -266,7 +279,7 @@ namespace GoGame
             return group;
         }
 
-        public void updateRegions()
+        public void updateRegions(int[,] board)
         {
             // reset regions
             this.regions = new List<Region>();
@@ -277,7 +290,7 @@ namespace GoGame
                 for (int col = 0; col < this.size; col++)
                 {
                     // check if there's a stone here (if there is, continue)
-                    if (this.board[row, col] != 0)
+                    if (board[row, col] != 0)
                     {
                         continue;
                     }
@@ -297,14 +310,14 @@ namespace GoGame
                     // create a new region from current location
                     Region r = new Region();
 
-                    r = traverseRegion(row, col, r);
+                    r = traverseRegion(row, col, r, board);
                     this.regions.Add(r);
                 }
             }
         }
 
         // same algorithm as `traverseGroup` with minor tweaks
-        private Region traverseRegion(int row, int col, Region region)
+        private Region traverseRegion(int row, int col, Region region, int[,] board)
         {
             int[,] visited = new int[this.size, this.size];
 
@@ -360,7 +373,7 @@ namespace GoGame
             return region;
         }
 
-        public void calculateChains()
+        public void calculateChains(int[,] board)
         {
             this.chains = new List<Chain>();
 
@@ -386,10 +399,10 @@ namespace GoGame
 
                             List<Vector> pointLiberties = new List<Vector>();
 
-                            if (this.validCoord(x + 1, y) && !pointLiberties.Contains(new Vector(x + 1, y)) && this.board[x + 1, y] == 0) { pointLiberties.Add(new Vector(x + 1, y)); }
-                            if (this.validCoord(x - 1, y) && !pointLiberties.Contains(new Vector(x - 1, y)) && this.board[x - 1, y] == 0) { pointLiberties.Add(new Vector(x - 1, y)); }
-                            if (this.validCoord(x, y + 1) && !pointLiberties.Contains(new Vector(x, y + 1)) && this.board[x, y + 1] == 0) { pointLiberties.Add(new Vector(x, y + 1)); }
-                            if (this.validCoord(x, y - 1) && !pointLiberties.Contains(new Vector(x, y - 1)) && this.board[x, y - 1] == 0) { pointLiberties.Add(new Vector(x, y - 1)); }
+                            if (this.validCoord(x + 1, y) && !pointLiberties.Contains(new Vector(x + 1, y)) && board[x + 1, y] == 0) { pointLiberties.Add(new Vector(x + 1, y)); }
+                            if (this.validCoord(x - 1, y) && !pointLiberties.Contains(new Vector(x - 1, y)) && board[x - 1, y] == 0) { pointLiberties.Add(new Vector(x - 1, y)); }
+                            if (this.validCoord(x, y + 1) && !pointLiberties.Contains(new Vector(x, y + 1)) && board[x, y + 1] == 0) { pointLiberties.Add(new Vector(x, y + 1)); }
+                            if (this.validCoord(x, y - 1) && !pointLiberties.Contains(new Vector(x, y - 1)) && board[x, y - 1] == 0) { pointLiberties.Add(new Vector(x, y - 1)); }
 
                             if (pointLiberties.Count <= 1)
                             {
@@ -447,7 +460,7 @@ namespace GoGame
             return true;
         }
 
-        private void removeDead()
+        private void removeDead(int[,] board)
         {
             for (int i = 0; i < this.groups.Count; i++)
             {
@@ -455,7 +468,7 @@ namespace GoGame
                 {
                     foreach (Vector p in this.groups[i].getStones())
                     {
-                        this.board[(int)p.X, (int)p.Y] = 0;
+                        board[(int)p.X, (int)p.Y] = 0;
                         if (this.groups[i].getPlayer() == 2)
                         {
                             this.blackPrisoners.Add(p);
@@ -472,17 +485,18 @@ namespace GoGame
 
         public float calculateScore(float komi)
         {
-            this.updateGroups();
-            this.updateRegions();
-            this.calculateChains();
+            int[,] scoreBoard = (int[,])this.board.Clone();
+            this.updateGroups(scoreBoard);
+            this.updateRegions(scoreBoard);
+            this.calculateChains(scoreBoard);
             foreach (Group group in this.groups)
             {
                 group.getSafety(this, true);
             }
 
-            this.removeDead();
-            this.updateGroups();
-            this.updateRegions();
+            this.removeDead(scoreBoard);
+            this.updateGroups(scoreBoard);
+            this.updateRegions(scoreBoard);
 
             float score = 0;
 
