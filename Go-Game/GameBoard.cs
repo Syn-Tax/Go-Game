@@ -121,7 +121,6 @@ namespace GoGame
         {
             base.OnResize(e);
             renderGrid();
-            adjustButtons();
         }
 
         public void createGrid() // The create grid function is responsible for building the board.
@@ -149,43 +148,6 @@ namespace GoGame
             // render the image again using the new dimensions of the window
             gridPictureBox = renderImage("../../assets/goBoard.png", (this.Width - (this.Height - 75)) / 2, 20, this.Height - 110, this.Height - 110, "grid");
         }
-
-        private void adjustButtons()
-        {
-            // calculate the height of each button
-            int buttonHeight = mainMenuPanel.Height / 7;
-
-            // calculate the font size based on the button height
-            int fontSize = buttonHeight / 3;
-
-            // calculate the total height of all buttons
-            int totalButtonHeight = buttonHeight * 3;
-
-            // calculate the starting y position of the first button
-            int y = mainMenuPanel.Height / 2 - totalButtonHeight / 2;
-
-            // resize and position the playButton
-            playButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            playButton.Location = new Point(mainMenuPanel.Width / 2 - playButton.Width / 2, y - 10);
-            playButton.Font = new Font(playButton.Font.FontFamily, fontSize);
-
-            // update the y position for the next button
-            y += buttonHeight;
-
-            // resize and position the optionsButton
-            optionsButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            optionsButton.Location = new Point(mainMenuPanel.Width / 2 - optionsButton.Width / 2, y);
-            optionsButton.Font = new Font(optionsButton.Font.FontFamily, fontSize);
-
-            // update the y position for the next button
-            y += buttonHeight;
-
-            // resize and position the quitButton
-            quitButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            quitButton.Location = new Point(mainMenuPanel.Width / 2 - quitButton.Width / 2, y + 10);
-            quitButton.Font = new Font(quitButton.Font.FontFamily, fontSize);
-        }
-
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) // Click event handler for the strip menu.
         {
