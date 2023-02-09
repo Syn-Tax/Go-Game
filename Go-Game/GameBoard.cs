@@ -198,5 +198,14 @@ namespace GoGame
             gameBoardPanel.Controls.Add(pb);
             return pb;
         }
+
+        private void rulesToolStripMenuItem_Click(object sender, EventArgs e) // Click event handler for the rules in the strip menu.
+        {
+            DialogResult result;
+            String ruleText;
+            // Adding a description of the reles.
+            ruleText = "The Basic rules of Go:\n\n1. Black makes the first move.\n2. A move consists of placing a single stone on an empty intersection.\n3. If an opposing coloured stone is surrounded in all adjacent intersections, then it is captured at taken off the board.\n4. Each player can pass their turn at any point, if both players pass, the game is over and the score is counted.\n5. Score is calculated from the territory (empty intersections) that each player has surrounded.\n6. Note that white has 5.5 bonus captures (komi), to offset the fact that they move second.";
+            result = MessageBox.Show(ruleText, "Basic Go Rules", MessageBoxButtons.OK);
+        }
     }
 }
