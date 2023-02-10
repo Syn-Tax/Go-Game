@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -181,6 +189,8 @@ namespace GoGame
 
             // now the last move was not a pass
             this.lastMovePass = false;
+
+
 
             // return success
             return true;

@@ -1,6 +1,17 @@
-﻿using System;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace GoGame
 {
@@ -11,6 +22,12 @@ namespace GoGame
         private Board board;
 
         private boardButton b1;
+        
+        private boardButton bb;
+
+        private int elapsedTime = 0;
+
+        private MediaPlayer mediaPlayer;
 
         public GameBoard()
         {
@@ -18,6 +35,9 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            this.board = new Board(9, 5.5f);
+            this.bb = new boardButton(this.board, this);
+            startMusic();
         }
 
         private void resetGame()
@@ -25,15 +45,69 @@ namespace GoGame
             mainMenuPanel.Visible = true;
             optionMenuPanel.Visible = false;
             gameBoardPanel.Visible = false;
+            initialiseBoard();
         }
 
         private void initialiseBoard()
         {
+            gameBoardPanel.Controls.Clear();
             this.board = new Board(9, 5.5f);
             b1 = new boardButton(this.board, this);
             b1.createButtons();
             createGrid();
             renderGrid();
+            this.bb.setBoard(this.board);
+            placeBtns();
+            createGrid();
+            initialiseTimer();
+        }
+
+        // method to initialise the timer
+        private void initialiseTimer()
+        {
+
+            // create an instance of the Timer class
+            Timer timer = new Timer();
+
+            // set the interval of the timer to 1 second
+            timer.Interval = 1000; // Timer will tick every second
+
+            // start the timer
+            timer.Start();
+
+            // assign the TimerTick method to the timer
+            timer.Tick += new EventHandler(Timer_Tick);
+
+            // add the label to display the time to the panel
+            gameBoardPanel.Controls.Add(timerLabel);
+
+        }
+
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+
+            // increment the elapsed time every tick
+            elapsedTime++;
+
+            // set the text of the label to whatever the elapsed time is
+            timerLabel.Text = TimeSpan.FromSeconds(elapsedTime).ToString();
+        }
+
+        // functiont to play and loop the music
+        private void startMusic()
+        {
+            // create a new instance of the MediaPlayer class
+            mediaPlayer = new MediaPlayer();
+
+            // set the media to play using the Open method
+            mediaPlayer.Open(new Uri("../../assets/game-music.wav", UriKind.Relative));
+
+            // loop the music while the form is open
+            mediaPlayer.MediaEnded += (sender, e) => mediaPlayer.Position = TimeSpan.Zero;
+
+            // play the music
+            mediaPlayer.Play();
         }
 
         // Creating function to add objects to the form
@@ -73,6 +147,12 @@ namespace GoGame
             }
         }
 
+        private void placeBtns()
+        {
+            // Defining an instance of board buttons, so that buttons can be added to the form.
+            this.bb.createButtons();
+            this.bb.renderStones();
+        }
 
         private void playButton_Click(object sender, EventArgs e) // handler for when the playButton is clicked
         {
@@ -119,6 +199,7 @@ namespace GoGame
             {
                 renderGrid();
             }
+            renderGrid();
         }
 
         public void createGrid() // The create grid function is responsible for building the board.
@@ -150,43 +231,6 @@ namespace GoGame
             }
         }
 
-        private void adjustButtons()
-        {
-            // calculate the height of each button
-            int buttonHeight = mainMenuPanel.Height / 7;
-
-            // calculate the font size based on the button height
-            int fontSize = buttonHeight / 3;
-
-            // calculate the total height of all buttons
-            int totalButtonHeight = buttonHeight * 3;
-
-            // calculate the starting y position of the first button
-            int y = mainMenuPanel.Height / 2 - totalButtonHeight / 2;
-
-            // resize and position the playButton
-            playButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            playButton.Location = new Point(mainMenuPanel.Width / 2 - playButton.Width / 2, y - 10);
-            playButton.Font = new Font(playButton.Font.FontFamily, fontSize);
-
-            // update the y position for the next button
-            y += buttonHeight;
-
-            // resize and position the optionsButton
-            optionsButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            optionsButton.Location = new Point(mainMenuPanel.Width / 2 - optionsButton.Width / 2, y);
-            optionsButton.Font = new Font(optionsButton.Font.FontFamily, fontSize);
-
-            // update the y position for the next button
-            y += buttonHeight;
-
-            // resize and position the quitButton
-            quitButton.Size = new Size(mainMenuPanel.Width / 3, buttonHeight);
-            quitButton.Location = new Point(mainMenuPanel.Width / 2 - quitButton.Width / 2, y + 10);
-            quitButton.Font = new Font(quitButton.Font.FontFamily, fontSize);
-        }
-
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) // Click event handler for the strip menu.
         {
             // Creating a message box to display about information.
@@ -204,6 +248,15 @@ namespace GoGame
             pb.Tag = tag;
             gameBoardPanel.Controls.Add(pb);
             return pb;
+        }
+
+        private void rulesToolStripMenuItem_Click(object sender, EventArgs e) // Click event handler for the rules in the strip menu.
+        {
+            DialogResult result;
+            String ruleText;
+            // Adding a description of the reles.
+            ruleText = "The Basic rules of Go:\n\n1. Black makes the first move.\n2. A move consists of placing a single stone on an empty intersection.\n3. If an opposing coloured stone is surrounded in all adjacent intersections, then it is captured at taken off the board.\n4. Each player can pass their turn at any point, if both players pass, the game is over and the score is counted.\n5. Score is calculated from the territory (empty intersections) that each player has surrounded.\n6. Note that white has 5.5 bonus captures (komi), to offset the fact that they move second.";
+            result = MessageBox.Show(ruleText, "Basic Go Rules", MessageBoxButtons.OK);
         }
     }
 }

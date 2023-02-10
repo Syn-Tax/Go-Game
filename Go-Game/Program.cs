@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;

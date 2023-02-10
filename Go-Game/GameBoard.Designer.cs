@@ -1,4 +1,12 @@
-﻿using System.Windows.Forms;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System.Windows.Forms;
 
 namespace GoGame
 {
@@ -33,6 +41,7 @@ namespace GoGame
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameBoard));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuPanel = new System.Windows.Forms.Panel();
             this.gameBoardPanel = new System.Windows.Forms.Panel();
             this.gameBoardBackButton = new System.Windows.Forms.Button();
@@ -42,6 +51,7 @@ namespace GoGame
             this.quitButton = new System.Windows.Forms.Button();
             this.optionsButton = new System.Windows.Forms.Button();
             this.playButton = new System.Windows.Forms.Button();
+            this.timerLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.mainMenuPanel.SuspendLayout();
             this.gameBoardPanel.SuspendLayout();
@@ -52,7 +62,8 @@ namespace GoGame
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.rulesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -66,6 +77,13 @@ namespace GoGame
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // rulesToolStripMenuItem
+            // 
+            this.rulesToolStripMenuItem.Name = "rulesToolStripMenuItem";
+            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.rulesToolStripMenuItem.Text = "Rules";
+            this.rulesToolStripMenuItem.Click += new System.EventHandler(this.rulesToolStripMenuItem_Click);
             // 
             // mainMenuPanel
             // 
@@ -82,6 +100,7 @@ namespace GoGame
             // 
             // gameBoardPanel
             // 
+            this.gameBoardPanel.Controls.Add(this.timerLabel);
             this.gameBoardPanel.Controls.Add(this.gameBoardBackButton);
             this.gameBoardPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gameBoardPanel.Location = new System.Drawing.Point(0, 0);
@@ -90,8 +109,8 @@ namespace GoGame
             this.gameBoardPanel.TabIndex = 3;
             // 
             // gameBoardBackButton
-            //
-            this.gameBoardBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            // 
+            this.gameBoardBackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameBoardBackButton.Location = new System.Drawing.Point(22, 22);
             this.gameBoardBackButton.Name = "gameBoardBackButton";
             this.gameBoardBackButton.Size = new System.Drawing.Size(99, 51);
@@ -112,7 +131,7 @@ namespace GoGame
             // 
             // optionsBackButton
             // 
-            this.optionsBackButton.Font = new System.Drawing.Font("Fugaz One", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsBackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsBackButton.Location = new System.Drawing.Point(22, 22);
             this.optionsBackButton.Name = "optionsBackButton";
             this.optionsBackButton.Size = new System.Drawing.Size(99, 51);
@@ -133,7 +152,7 @@ namespace GoGame
             // 
             // quitButton
             // 
-            this.quitButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.quitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quitButton.Location = new System.Drawing.Point(250, 296);
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(279, 80);
@@ -144,7 +163,7 @@ namespace GoGame
             // 
             // optionsButton
             // 
-            this.optionsButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsButton.Location = new System.Drawing.Point(250, 172);
             this.optionsButton.Name = "optionsButton";
             this.optionsButton.Size = new System.Drawing.Size(279, 80);
@@ -155,7 +174,7 @@ namespace GoGame
             // 
             // playButton
             // 
-            this.playButton.Font = new System.Drawing.Font("Fugaz One", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playButton.Location = new System.Drawing.Point(250, 45);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(279, 80);
@@ -164,6 +183,15 @@ namespace GoGame
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
+            // timerLabel
+            // 
+            this.timerLabel.AutoSize = true;
+            this.timerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timerLabel.Location = new System.Drawing.Point(36, 172);
+            this.timerLabel.Name = "timerLabel";
+            this.timerLabel.Size = new System.Drawing.Size(0, 33);
+            this.timerLabel.TabIndex = 1;
+            // 
             // GameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -171,8 +199,10 @@ namespace GoGame
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.mainMenuPanel);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "GameBoard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Go";
@@ -180,6 +210,7 @@ namespace GoGame
             this.menuStrip1.PerformLayout();
             this.mainMenuPanel.ResumeLayout(false);
             this.gameBoardPanel.ResumeLayout(false);
+            this.gameBoardPanel.PerformLayout();
             this.optionMenuPanel.ResumeLayout(false);
             this.optionMenuPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -200,6 +231,8 @@ namespace GoGame
         private System.Windows.Forms.Panel optionMenuPanel;
         private System.Windows.Forms.Button optionsBackButton;
         private System.Windows.Forms.Label nothingToSeeHere;
+        private ToolStripMenuItem rulesToolStripMenuItem;
+        private Label timerLabel;
     }
 }
 

@@ -1,4 +1,13 @@
-﻿using System;
+
+/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Media;
@@ -58,6 +67,11 @@ namespace GoGame
 
             this.blackStone = new Bitmap("../../assets/black.png");
             this.whiteStone = new Bitmap("../../assets/white.png");
+        }
+
+        public void setBoard(Board board)
+        {
+            this.board = board;
         }
 
         // createButtons is used for the construction and mangement of buttons
@@ -268,19 +282,24 @@ namespace GoGame
             {
                 illegalMove();
             }
+            else
+            {
+                clickSound();
+            }
             renderStones();
             // Playing a sound effect on click.
-            clickSound();
         }
 
         private void passBtn_Click(object sender, EventArgs e)
         {
             this.board.move(-1, -1, this.gameBoard);
+            renderStones();
         }
 
         private void resignBtn_Click(object sender, EventArgs e)
         {
             this.board.move(-2, -2, this.gameBoard);
+            renderStones();
         }
     }
 }
