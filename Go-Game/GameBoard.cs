@@ -193,7 +193,8 @@ namespace GoGame
             base.OnResize(e);
             if (mainMenuPanel.Visible)
             {
-                adjustButtons();
+                // Buttons cannot be adjusted, not enough time left to complete
+                // adjustButtons();
             }
             if (gameBoardPanel.Visible)
             {
