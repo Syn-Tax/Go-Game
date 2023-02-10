@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace GoGame
 {
@@ -12,6 +15,10 @@ namespace GoGame
 
         private boardButton bb;
 
+        private int elapsedTime = 0;
+
+        private MediaPlayer mediaPlayer;
+
         public GameBoard()
         {
             InitializeComponent();
@@ -20,6 +27,7 @@ namespace GoGame
             gameBoardPanel.Visible = false;
             this.board = new Board(9, 5.5f);
             this.bb = new boardButton(this.board, this);
+            startMusic();
         }
 
         private void resetGame()
@@ -40,23 +48,53 @@ namespace GoGame
             initialiseTimer();
         }
 
+        // method to initialise the timer
         private void initialiseTimer()
         {
 
+            // create an instance of the Timer class
             Timer timer = new Timer();
+
+            // set the interval of the timer to 1 second
             timer.Interval = 1000; // Timer will tick every second
+
+            // start the timer
             timer.Start();
+
+            // assign the TimerTick method to the timer
             timer.Tick += new EventHandler(Timer_Tick);
+
+            // add the label to display the time to the panel
             gameBoardPanel.Controls.Add(timerLabel);
 
         }
 
-        private int elapsedTime = 0;
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+
+            // increment the elapsed time every tick
             elapsedTime++;
+
+            // set the text of the label to whatever the elapsed time is
             timerLabel.Text = TimeSpan.FromSeconds(elapsedTime).ToString();
+        }
+
+        // functiont to play and loop the music
+        private void startMusic()
+        {
+            // create a new instance of the MediaPlayer class
+            mediaPlayer = new MediaPlayer();
+
+            // set the media to play using the Open method
+            mediaPlayer.Open(new Uri("../../assets/game-music.wav", UriKind.Relative));
+
+            // loop the music while the form is open
+            mediaPlayer.MediaEnded += (sender, e) => mediaPlayer.Position = TimeSpan.Zero;
+
+            // play the music
+            mediaPlayer.Play();
+
         }
 
         // Creating function to add objects to the form
