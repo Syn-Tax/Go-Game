@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Media;
