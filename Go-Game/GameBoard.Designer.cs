@@ -1,4 +1,12 @@
-﻿using System.Windows.Forms;
+﻿/*
+    Alex Glen  
+    Lewis Simmonds
+    Oscar Morris
+    AC22005
+    Grid Game
+*/
+
+using System.Windows.Forms;
 
 namespace GoGame
 {
