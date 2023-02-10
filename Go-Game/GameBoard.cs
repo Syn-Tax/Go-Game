@@ -37,6 +37,26 @@ namespace GoGame
             this.bb.setBoard(this.board);
             placeBtns();
             createGrid();
+            initialiseTimer();
+        }
+
+        private void initialiseTimer()
+        {
+
+            Timer timer = new Timer();
+            timer.Interval = 1000; // Timer will tick every second
+            timer.Start();
+            timer.Tick += new EventHandler(Timer_Tick);
+            gameBoardPanel.Controls.Add(timerLabel);
+
+        }
+
+        private int elapsedTime = 0;
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            elapsedTime++;
+            timerLabel.Text = TimeSpan.FromSeconds(elapsedTime).ToString();
         }
 
         // Creating function to add objects to the form

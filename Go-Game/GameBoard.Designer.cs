@@ -33,6 +33,7 @@ namespace GoGame
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameBoard));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuPanel = new System.Windows.Forms.Panel();
             this.gameBoardPanel = new System.Windows.Forms.Panel();
             this.gameBoardBackButton = new System.Windows.Forms.Button();
@@ -42,7 +43,7 @@ namespace GoGame
             this.quitButton = new System.Windows.Forms.Button();
             this.optionsButton = new System.Windows.Forms.Button();
             this.playButton = new System.Windows.Forms.Button();
-            this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timerLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.mainMenuPanel.SuspendLayout();
             this.gameBoardPanel.SuspendLayout();
@@ -69,6 +70,13 @@ namespace GoGame
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // rulesToolStripMenuItem
+            // 
+            this.rulesToolStripMenuItem.Name = "rulesToolStripMenuItem";
+            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.rulesToolStripMenuItem.Text = "Rules";
+            this.rulesToolStripMenuItem.Click += new System.EventHandler(this.rulesToolStripMenuItem_Click);
+            // 
             // mainMenuPanel
             // 
             this.mainMenuPanel.Controls.Add(this.gameBoardPanel);
@@ -84,6 +92,7 @@ namespace GoGame
             // 
             // gameBoardPanel
             // 
+            this.gameBoardPanel.Controls.Add(this.timerLabel);
             this.gameBoardPanel.Controls.Add(this.gameBoardBackButton);
             this.gameBoardPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gameBoardPanel.Location = new System.Drawing.Point(0, 0);
@@ -166,24 +175,26 @@ namespace GoGame
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
-            // rulesToolStripMenuItem
+            // timerLabel
             // 
-            this.rulesToolStripMenuItem.Name = "rulesToolStripMenuItem";
-            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.rulesToolStripMenuItem.Text = "Rules";
-            this.rulesToolStripMenuItem.Click += new System.EventHandler(this.rulesToolStripMenuItem_Click);
+            this.timerLabel.AutoSize = true;
+            this.timerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timerLabel.Location = new System.Drawing.Point(36, 172);
+            this.timerLabel.Name = "timerLabel";
+            this.timerLabel.Size = new System.Drawing.Size(0, 33);
+            this.timerLabel.TabIndex = 1;
             // 
             // GameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
             this.Controls.Add(this.mainMenuPanel);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "GameBoard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Go";
@@ -191,6 +202,7 @@ namespace GoGame
             this.menuStrip1.PerformLayout();
             this.mainMenuPanel.ResumeLayout(false);
             this.gameBoardPanel.ResumeLayout(false);
+            this.gameBoardPanel.PerformLayout();
             this.optionMenuPanel.ResumeLayout(false);
             this.optionMenuPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -212,6 +224,7 @@ namespace GoGame
         private System.Windows.Forms.Button optionsBackButton;
         private System.Windows.Forms.Label nothingToSeeHere;
         private ToolStripMenuItem rulesToolStripMenuItem;
+        private Label timerLabel;
     }
 }
 
